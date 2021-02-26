@@ -101,7 +101,7 @@
 
                 {% for cliente in clientes_list %}
                     {% if user|has_role:'oficial,contador,supervisor_atendimento' %}
-                    <a href="{% url 'cliente_detail' cliente.pk %}" target="_blank">
+                    <a href="{% url 'cliente_detail' cliente.pk %}" target="_blank" rel="noopener">
                     {% else %}
                     <a href="#" disabled="true" onclick="return false;">
                     {% endif %}

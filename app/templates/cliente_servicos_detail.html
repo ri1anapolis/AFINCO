@@ -100,7 +100,7 @@
             <div class="form-group">
                 <label for="id_caixa">Fechamento de Caixa:</label>
                 <div class="list-group">
-                    <a href="{% url 'f_caixa' %}?fcaixa_id={{ clienteservicos.caixa.id }}" class="list-group-item list-group-item-action" target="_blank">{{ clienteservicos.caixa }}</a>
+                    <a href="{% url 'f_caixa' %}?fcaixa_id={{ clienteservicos.caixa.id }}" class="list-group-item list-group-item-action" target="_blank" rel="noopener">{{ clienteservicos.caixa }}</a>
                 </div>
             </div>
         </div>
@@ -113,7 +113,7 @@
             <div class="form-group">
                 <label for="id_fatura">Fatura:</label>
                 <div class="list-group">
-                    <a href="{% url 'cliente_faturas_detail' clienteservicos.fatura.pk %} " class="list-group-item list-group-item-action" target="_blank">{{ clienteservicos.fatura }}</a>
+                    <a href="{% url 'cliente_faturas_detail' clienteservicos.fatura.pk %} " class="list-group-item list-group-item-action" target="_blank" rel="noopener">{{ clienteservicos.fatura }}</a>
                 </div>
             </div>
         </div>
