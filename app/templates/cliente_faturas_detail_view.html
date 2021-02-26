@@ -1,0 +1,195 @@
+{% extends 'base.html' %}
+{% load static %}
+{% load project_tags %}
+{% load permission_tags %}
+
+{% block title %}::: AFINCO ::: Faturas - Detalhes{% endblock title%}
+
+{% block content %}
+
+
+
+    <h3>Faturas de Clientes</h3>
+    <span class="text-muted">Detalhes da fatura: {{ clientefaturas }}</span>
+
+    <br><br>
+
+    <div class="form-row">
+        <div class="col-sm-12 col-md-12 col-lg-9">
+            <div class="form-group">
+                <label for="id_cliente" class="col-form-label">Cliente</label>
+                <select id='id_cliente' class="form-control" disabled="true">
+                    <option value="{{ clientefaturas.cliente.id }}" selected="true">{{ clientefaturas.cliente.nome }}</option>
+                </select>
+                <small class="form-text text-muted">Cliente ao qual foi prestado o serviço.</small>
+            </div>
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="col-sm-6 col-md-4 col-lg-3">
+            <div class="form-group">
+                <label for="id_valor_faturas" class="col-form-label">Valor dos serviços</label>
+                <input type="text" id="id_valor_faturas" class="form-control" value="{{ clientefaturas.valor_servicos|floatformat:2|intseparator }}" disabled="true">
+                <small class="form-text text-muted">Valor total dos serviços relacionados à fatura.</small>
+            </div>
+        </div>
+        <div class="col-sm-6 col-md-4 col-lg-3">
+            <div class="form-group">
+                <label for="id_valor_descontos" class="col-form-label">Valor dos descontos</label>
+                <input type="text" id="id_valor_descontos" class="form-control" value="{{ clientefaturas.valor_descontos|floatformat:2|intseparator }}" disabled="true">
+                <small class="form-text text-muted">Valor total dos descontos incidentes sobre a fatura, quando houver.</small>
+            </div>
+        </div>
+        <div class="col-sm-6 col-md-4 col-lg-3">
+            <div class="form-group">
+                <label for="id_valor_fatura" class="col-form-label">Valor da fatura</label>
+                <input type="text" id="id_valor_fatura" class="form-control" value="{{ clientefaturas.valor_fatura|floatformat:2|intseparator }}" disabled="true">
+                <small class="form-text text-muted">Valor total da fatura, observando-se os serviços e descosntos.</small>
+            </div>
+        </div>
+    </div>
+
+    <div class="form-row">
+        <div class="col-sm-12 col-md-12 col-lg-6">
+            <div class="form-group">
+                <label for="id_observacoes" class="col-form-label">Observações</label>
+                <textarea name="observacoes" id="id_observacoes" cols="40" rows="2" class="textarea form-control" disabled>{{ clientefaturas.observacoes }}
+                </textarea>
+                <small class="form-text text-muted">Informações adicionais acerca da fatura.</small>
+            </div>
+        </div>
+    </div>
+
+    <div class="form-row">
+        <div class="mt-3 col-sm-6 col-md-5 col-lg-3">
+           <div class="form-group">
+                <div class="form-check">
+                    <label for="id_liquidado" class="form-check-label">
+                        <input type="checkbox" id='id_liquidado' class="checkboxinput form-check-input" disabled="true" {% if clientefaturas.liquidado %}checked{% endif %}>
+                        Liquidado?
+                    </label>
+                    <small class="form-text text-muted">Indica se a fatura já foi ou não paga.</small>
+                </div>
+            </div>
+        </div>
+
+    {% if clientefaturas.liquidado %}
+        <div class="col-sm-6 col-md-5 col-lg-3">
+            <div class="form-group">
+                <label for="div_id_data_pagamento" class="col-form-label">Data do pagamento</label>
+                <input type="text" id="div_id_data_pagamento" class="form-control"
+                    value="{% if clientefaturas.data_pagamento %}{{ clientefaturas.data_pagamento|date:'d/m/Y' }}
+                            {% else %}----{% endif %}"
+                disabled="true">
+                <small class="form-text text-muted">Data do pagamento da fatura.</small>
+            </div>
+        </div>
+    {% endif %}
+    </div>
+
+    
+    {% if servicos_relacionados %}
+    <div class="form-row">
+        <div class="col-sm-12 col-md-12 col-lg-9">
+            <small class="text-danger text-justify">
+                Esta fatura não pode ser removida pois possui objetos relacionados.
+            </small>
+        </div>
+    </div>
+    <br>
+    {% endif %}
+
+    <br>
+
+    <div class="form-row">
+        <div class="col-sm-12 col-md-12 col-lg-9">
+
+            <a href="?print" target="_blank" rule="button" 
+            {% if clientefaturas.liquidado %}
+                class="btn btn-light"
+            {% else %}
+                class="btn btn-outline-info"
+            {% endif %}
+            >
+                {% if clientefaturas.liquidado %}
+                    Comprovante de Pagamento
+                {% else %}
+                    Extrato de Serviços
+                {% endif %}
+            </a>
+
+            <span class="text-muted float-right">
+                <a href="{% url 'cliente_faturas_list' %}" class="btn btn-outline-secondary" id="btn_voltar_para_lista" rule="button">Ver Lista</a>
+
+            {% if request.user.is_superuser or user|has_role:'oficial,contador,supervisor_atendimento' %}
+                {% if not clientefaturas.deposito.consolidado %}
+                    <a href="{% url 'cliente_faturas_edit' clientefaturas.pk %}" class="btn btn-outline-primary" rule="button">Editar</a>
+                {% else %}
+                    <button class="btn btn-light disabled">Editar</button>
+                {% endif %}
+            {% endif %}
+            {% if request.user.is_superuser or user|has_role:'oficial,contador' %}
+                {% if clientefaturas.deposito or servicos_relacionados %}
+                    <button class="btn btn-light disabled">Apagar</button>
+                {% else %}
+                    <a href="{% url 'cliente_faturas_delete' clientefaturas.pk %}" class="btn btn-outline-danger" rule="button">Apagar</a>
+                {% endif %}
+            {% endif %}
+
+            </span>
+        </div>
+    </div>
+
+    <br>
+
+    {% if servicos_relacionados %}
+    <br><br>
+    <div class="row">
+        <div class="col-sm-12 col-md-12 col-lg-9">
+            <p class="form-text">
+                    Serviços relacionados:
+            </p>
+            <table class="table table-striped table-sm table_link">
+                <thead>
+                    <tr>
+                        <th>Data:</th>
+                        <th>Protocolo:</th>
+                        <th>Valor</th>
+                        <th style="width:10%;">Liquidado</th>
+                    </tr>
+                </thead>
+                <tbody>
+                {% for servico in servicos_relacionados %}
+                    <tr data-href="{% url 'cliente_servicos_detail' servico.pk %}" data-target="_blank">
+                        <td>{{ servico.data|date:'d/m/Y' }}</td>
+                        <td>
+                            {% if servico.protocolo %}
+                                {{ servico.tipo_protocolo }}.{{ servico.protocolo}}
+                            {% else %}
+                                ----
+                            {% endif %}</td>
+                        <td>R$ {{ servico.valor|floatformat:2|intseparator }}</td>
+                        <td class="text-center">
+                            {% if servico.liquidado %}
+                                <img src="{% static 'admin/img/icon-yes.svg' %}" alt="Sim">
+                            {% else %}
+                                <img src="{% static 'admin/img/icon-no.svg' %}" alt="Não">
+                            {% endif %}
+                        </td>
+                    </tr>
+                {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+    {% endif %}
+
+    <br><br>
+
+{% endblock content %}
+
+{% block javascript %}
+    <script src="{% static 'js/voltar_para_lista.js' %}"></script>
+    <script src="{% static 'js/table_link.js' %}"></script>
+{% endblock javascript %}

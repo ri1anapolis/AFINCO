@@ -1,0 +1,101 @@
+{% extends 'base.html' %}
+{% load static %}
+{% load project_tags %}
+{% load permission_tags %}
+
+{% block title %}::: AFINCO ::: Despesas - Detalhes{% endblock title%}
+
+{% block content %}
+
+    <h3>Despesas</h3>
+    <span class="text-muted">Detalhes da despesa: {{ despesa }}</span>
+    <br><br>
+
+
+    <div class="form-row">
+        <div class="col-sm-4 col-md-3 col-lg-2">
+            <div class="form-group">
+                <label for="id_data_despesa" class="col-form-label">Data</label>
+                <input type="text" id="id_data_despesa" class="form-control" value="{{ despesa.data_despesa|date:'d/m/Y' }}" disabled="true">
+                <small class="form-text text-muted">Data da despesa.</small>
+            </div>
+        </div>
+        <div class="col-sm-5 col-md-4 col-lg-3">
+            <div class="form-group">
+                <label for="id_valor" class="col-form-label">Valor</label>
+                <input type="text" id="id_valor" class="form-control"
+                    value="{{ despesa.valor|floatformat:2|intseparator }}" disabled="true">
+                <small class="form-text text-muted">Valor da despesa.</small>
+            </div>
+        </div>
+    </div>
+    
+    <div class="row">
+        <div class="col-sm-12 col-md-10 col-lg-7">
+            <div class="form-group">
+                <label for="id_identificacao" class="col-form-label  requiredField">Histórico</label>
+                <input type="text" id="id_identificacao" class="form-control" value="{{ despesa.identificacao }}" disabled="true">
+                <small class="form-text text-muted">Discriminação da despesa.</small>
+            </div>
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="col-sm-12 col-md-10 col-lg-7">
+            <div class="form-group">
+                <label for="id_categoria_despesa" class="col-form-label  requiredField">Categoria</label>
+                <input type="text" id="id_categoria_despesa" class="form-control" value="{{ despesa.categoria_despesa }}" disabled="true">
+                <small class="form-text text-muted">Categoria da despesa conforme tabela da Receita Federal.</small>
+            </div>
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="col-sm-12 col-md-10 col-lg-7">
+            <div class="form-group">
+                <label for="id_observacoes" class="col-form-label">Observações</label>
+                <textarea name="observacoes" cols="40" rows="2" class="textarea form-control" 
+                    id="id_observacoes" disabled>{{ despesa.observacoes }}</textarea>
+                <small class="form-text text-muted">Observações acerca da despesa.</small>
+            </div>
+        </div>
+    </div>
+
+    <div class="form-row">
+        <div class="col-sm-12 col-md-10 col-lg-7">
+           <div class="form-group">
+                <div class="form-check">
+                    <label for="id_contabilizar_cofre" class="form-check-label">
+                        <input type="checkbox" id='id_contabilizar_cofre' class="checkboxinput form-check-input" 
+                            disabled="true" {% if categoriadespesa.contabilizar_cofre %}checked{% endif %}>
+                        Contabilizar no Cofre?
+                    </label>
+                    <small class="form-text text-muted">Indica se a despesa deve ser descontada do saldo do cofre, quando vinculada.</small>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <br>
+
+    <div class="form-row">
+        <div class="col-sm-12 col-md-10 col-lg-7">
+            <span class="text-muted float-right">
+                <a href="{% url 'despesa_list' %}" class="btn btn-outline-secondary" id="btn_voltar_para_lista" rule="button">Ver Lista</a>
+            {% if request.user.is_superuser or user|has_role:'oficial,contador' %}
+                <a href="{% url 'despesa_edit' despesa.pk %}" class="btn btn-outline-primary" rule="button">Editar</a>
+                <a href="{% url 'despesa_delete' despesa.pk %}" class="btn btn-outline-danger" rule="button">Apagar</a>
+            {% endif %}
+            </span>
+        </div>
+    </div>
+
+    <br>
+
+    <br>
+
+{% endblock content %}
+
+{% block javascript %}
+    <script src="{% static 'js/voltar_para_lista.js' %}"></script>
+{% endblock javascript %}

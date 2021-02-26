@@ -1,0 +1,54 @@
+{% extends 'base.html' %}
+{% load static %}
+{% load project_tags %}
+{% load crispy_forms_tags %}
+
+{% block title %}::: AFINCO ::: Login{% endblock title %}
+
+{% block content %}
+    <br><br>
+    <div class="proj-center-div">
+        <div class="proj-center-div-sub rounded">
+        {% if user.is_authenticated %}
+        <p class="text-center">Olá, {% if user.first_name %}{{ user.first_name }}
+                {% else %}{{ user.username }}
+                {% endif %}!</p>
+        <p class="text-center">Você já se encontra logado no sistema! Estamos te redirecionando para sua
+            <a href="{% url 'home' %}">home</a>!</p>
+        
+        {% else %}
+            <form method="post">
+                {% csrf_token %}
+                {{ form|crispy }}
+
+                <small class="text-muted text-justify">Ao entrar no serviço o usuário declara ter lido e concordado
+                    com os <a href="{% url 'home' %}">Termos de Utilização do Serviço</a>.</small>
+                <br><br>
+                <button class="btn btn-block btn-success" type="submit">Log in</button>
+            </form>
+        {% endif %}
+        </div>
+    </div>
+
+    <div class="text-center text-muted fixed-bottom">
+        <small>{% project_version %}</small>
+    </div>
+{% endblock content %}
+
+{% block javascript %}
+    {% if user.is_authenticated %}
+    <script>
+        setTimeout(function(){
+            window.location.href = "{% url 'home' %}";
+        }, 1000);
+    </script>
+    {% else %}
+    <script src="{% static 'js/particles.min.js' %}"></script>
+    <script src="{% static 'js/particles_init.js' %}"></script>
+    <script type="text/javascript">
+        $(function(){
+            $('.background').css('background-color', '#343a40');
+        });
+    </script>
+    {% endif %}
+{% endblock javascript %}

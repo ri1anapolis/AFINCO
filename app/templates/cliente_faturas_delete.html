@@ -1,0 +1,21 @@
+{% extends "base.html" %}
+{% load permission_tags %}
+
+{% block title %}::: AFINCO ::: Faturas - Remover{% endblock title %}
+
+{% block content %}
+    <h3>Faturas de Clientes</h3>
+    <span class="text-muted">Remover fatura: <b>{{ clientefaturas.nome }}</b></span>
+    <br /><br />
+    <form action="" method="post">
+        {% csrf_token %}
+        <p>Você tem certeza que deseja remover permanentemente esta fatura?</p>
+        <span class="text-muted float-right">
+            <a href="{% url 'cliente_servicos_detail' clientefaturas.pk %}" class="btn btn-outline-secondary" rule="button">Cancelar</a>
+            {% if user|has_role:'oficial,contador' %}
+            <input type="submit" class="btn btn-outline-danger" value="Sim! Remover!">
+            {% endif %}
+        </span>
+    </form>
+    <br />
+{% endblock content %}

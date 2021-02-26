@@ -1,0 +1,65 @@
+{% extends 'base.html' %}
+
+{% block title %}::: AFINCO ::: Homepage{% endblock title %}
+
+{% block content %}
+
+    <div class="jumbotron">
+        <h1 class="display-4">
+            {% if user.is_authenticated %}Olá, 
+                {% if user.first_name %}{{ user.first_name }}
+                {% else %}{{ user.username }}
+                {% endif %}!
+            {% else %}Olá, pessoa!
+            {% endif %}
+        </h1>
+        <p class="lead">Seja bem vindo ao AFINCO, Assistente de Controle Financeiro-Contábil do Primeiro
+            Cartório de Registro de Imóveis de Anápolis/GO</p>
+        <hr class="my-4">
+
+        <h6>Termos de utilização do serviço:</h6>
+        <ul>
+            <li>Este serviço tem caráter corporativo e deve ser usado pelos usuários
+                como ferramenta de auxílio ao exercício de suas funções na
+                serventia;</li>
+            <li>O uso deste serviço é limitado aos colaboradores/funcionários do CRI1,
+                sendo vedado seu uso a pessoas estranhas à serventia;</li>
+            <li>As credenciais de acesso devem ser solicitadas aos Chefes de Setores,
+                Oficial e/ou Oficial substituto, que devem informar a liberação ao Supervisor
+                do Setor de Informática, que, por sua vez, disponibilizará as credenciais
+                de acesso à plataforma;</li>
+            <li>O uso da plataforma pelos usuários estará condicionado ao entendimento do
+                Oficial da serventia quanto à sua necessidade;</li>
+            <li>Todas as informações presentes no serviço são de propriedade da serventia,
+                portanto:</li>
+                <ul>
+                    <li>É vedada a publicidade não autorizada das informações do serviço;</li>
+                    <li>Nenhum utilizador do sistema possui, total ou parcialmente, direitos
+                        sobre as as informações disponibilizadas no serviço.</li>
+                </ul>
+            <li>Ao entrar e/ou utilizar o sistema o usuário 
+                <span style="text-decoration: underline">
+                {% if user.is_authenticated %}
+                    {% if user.first_name %}{{ user.first_name }}
+                        {% if user.last_name %} {{ user.last_name }}{% endif %}
+                    {% else %}{{ user.username }}
+                    {% endif %}
+                {% endif %}
+                </span> 
+                declara ter lido e concordado com os termos de utilização do serviço, bem como
+                com o Código de Normas/Organização do cartório.
+                </li>
+        </ul>
+
+        <br><br>
+        <p class="lead">
+        {% if user.is_authenticated %}
+            <a href="{% url 'logout' %}" 
+                class="btn btn-outline-secondary btn-sm float-right" role="button">Sair</a>
+        {% else %}
+            <a href="{% url 'login' %}" 
+                class="btn btn-primary btn-lg float-right" role="button">Entrar</a>
+        {% endif %}
+        </p>
+    </div>
+{% endblock content %}

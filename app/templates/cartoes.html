@@ -1,0 +1,144 @@
+{% extends 'base.html' %}
+{% load static %}
+{% load project_tags %}
+
+{% block title %}::: AFINCO ::: Cartões{% endblock title %}
+
+{% block content %}
+    <br>
+    <div class="proj-center-div text-light">
+        <div id="main" class="col-12 text-center">
+            <h1 class='display-2 mb-0 font-weight-bold'>Cartões</h1>
+
+            <h2 class='d-none d-lg-block display-4 mt-0 mb-5'>Calcule o valor a ser cobrado!</h2>
+            <h3 class='d-none d-md-block d-lg-none display-4 mt-0 mb-5 font-weight-light' style="font-size: 50px;">Calcule o valor a ser cobrado!</h3>
+            <h3 class='d-md-none display-4 mt-0 mb-5 font-weight-light' style="font-size: 32px;">Calcule o valor a ser cobrado!</h3>
+            
+            <p class='d-none d-xl-block d-lg-block d-md-block lead mt-3'>Informe o valor e escolha a bandeira e forma de pagamento!</p>
+
+            <div class="alert alert-danger alert-dismissible fade show text-left" style="display: none;" role="alert" id="messages">
+                <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+
+            <div id="form_cartoes" class="form-row text-center mb-4">
+
+                <div class="input-group mb-2 col-xl-9 col-lg-9 col-md-12 col-sm-12 order-xl-1">
+                    <div class="input-group-prepend">
+                        <label for="inputValorServico" class="input-group-text">Valor</label>
+                    </div>
+                    <textarea name="inputValorServico" id="inputValorServico" maxlength="160" rows="1" class="form-control noresize" style="resize: none;" placeholder="Insira os valores separados por espaços. ::: Apenas dígitos e vírgula são válidos :::"></textarea>
+                    <div class="input-group-append">
+                        <span class="input-group-text">R$</span>
+                        <span class="input-group-text text-truncate" style="max-width: 150px;" id="valorServico">0,00</span>
+                    </div>
+                </div>
+
+                <div class="input-group mb-2 col-xl-6 col-lg-6 col-md-8 col-sm-12 order-xl-3 order-lg-3 order-2">
+                    <div class="input-group-prepend">
+                        <label for="bandeira" class="input-group-text">Bandeira</label>
+                    </div>
+                    <select class="custom-select" id="bandeira">
+                        <option value selected>Selecione...</option>
+                        {% for bandeira in cartoes.bandeiras %}
+                            <option value="{{ bandeira.id }}">{{ bandeira.nome }}</option>
+                        {% endfor %}
+                    </select>
+                </div>
+
+                <div class="d-none d-lg-block d-md-none"></div>
+
+                <div class="input-group mb-2 col-xl-3 col-lg-3 col-md-4 col-sm-8 col-7 order-xl-4 order-lg-4 order-3">
+                    <div class="input-group-prepend">
+                        <label for="operacao" class="input-group-text">Operação</label>
+                    </div>
+                    <select class="custom-select" name="operacao" id="operacao">
+                        <option value="DB" >Débito</option>
+                        <option value="CR" >Crédito</option>
+                    </select>
+                </div>
+
+                <div class="input-group mb-2 col-xl-2 col-lg-2 col-md-3 col-sm-4 col-5 order-xl-5 order-lg-5 order-4">
+                    <div class="input-group-prepend">
+                        <label for="parcelas" class="input-group-text">Parcelas</label>
+                    </div>
+                    <input id='parcelas' type="number" class="form-control" maxlength="2" step="1" min="1" max="12" disabled="true">
+                </div>
+
+                <div class="input-group mb-2 col-xl-3 col-lg-3 col-md-5 col-sm-7 col-7 order-xl-2 order-lg-2 order-5">
+                    <div class="input-group-prepend">
+                        <label for="protocolo" class="input-group-text">Protocolo</label>
+                    </div>
+                    <input id='protocolo' maxlength="30" type="text" class="form-control">
+                </div>
+
+                <div class="mb-2 ml-auto text-right col-xl-1 col-lg-1 col-md-2 col-sm-4 col-3 order-6">
+                    <button disabled type="submit" formaction="{% url 'regcartoes_new' %}" class="btn btn-light px-2 text-nowrap" id="btnSalvaForm">
+                        <img class="glyph-icon mb-1" src="{% static 'svg/si-glyph-floppy-disk.svg' %}" alt="Salvar">
+                        <small>&</small>
+                        <img class="glyph-icon mb-1" src="{% static 'svg/si-glyph-print.svg' %}" alt="Imprimir">
+                    </button>
+                    {% csrf_token %}
+                </div>
+
+            </div>
+
+            <div class="row">
+
+                <div class="col-xl-6 col-lg-6 col-md-12 p-0 order-1 order-xl-2 order-lg-2 text-break">
+                    <h2 class='display-3 font-weight-bold mb-0'>
+                        <span class="lead align-baseline">R$</span><span id="valorCobrado">0,00</span>
+                    </h2>
+                    <p class="lead mt-0">Valor a ser Cobrado</p>
+                </div>
+
+                <div class="col-xl-3 col-lg-3 col-md-7 pt-3 p-0 order-2 order-xl-1 order-lg-1 text-break">
+                    <h2 class='display-4 mb-0'>
+                        <span class="lead align-baseline">R$</span><span id="valorJuros-valorParcelas">0,00</span></h2>
+                    <p class="lead mt-0" id="label-valorJuros-valorParcelas">Valor da Tarifa</p>
+                </div>
+
+                <div class="col-xl-3 col-lg-3 col-md-5 p-0 pt-3 order-3">
+                    <h2 class='display-4 mb-0'>
+                        <span id="taxaJuros">0,00</span><span class="lead align-baseline">%</span></h2>
+                    <p class="lead mt-0">Taxa de Administração</p>
+                </div>
+            
+            </div>
+
+        </div>
+    </div>
+    <br><br>
+    <div class="col-12 text-center mt-3" style="display: none;">
+        <a class="btn btn-sm btn-outline-light" data-toggle="collapse" href="#collapseRegistros" role="button" aria-expanded="false" aria-controls="collapseExample">
+            Registros
+        </a>
+    </div>
+    <section class="collapse border rounded mt-2 p-3 bg-light table-responsive" id="collapseRegistros">
+    </section>
+
+    <br><br>
+    <div class="text-right text-muted fixed-bottom">
+        <small>{% project_version %}</small>
+    </div>
+{% endblock content %}
+
+{% block javascript %}
+    <script src="{% static 'js/particles.min.js' %}"></script>
+    <script src="{% static 'js/particles_init.js' %}"></script>
+    <script src="{% static 'js/toBR.js' %}"></script>
+    <script src="{% static 'js/cartoes.js' %}"></script>
+    <script src="{% static 'js/cartoes_registros.js' %}"></script>
+    <script type="text/javascript">
+        const bgColor = "#465c5c"
+
+        document.querySelector('canvas.background').style.backgroundColor = bgColor
+        document.querySelector('body').style.backgroundColor = bgColor
+
+        //call cartoes app
+        cartoes('{{ cartoes_json | safe }}')
+        cartoesRegistros('{{ registros_json | safe }}', "/cartoes/reg/")
+
+    </script>
+{% endblock javascript %}

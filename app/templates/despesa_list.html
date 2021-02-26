@@ -1,0 +1,126 @@
+{% extends 'base.html' %}
+{% load staticfiles %}
+{% load permission_tags %}
+{% load project_tags %}
+
+{% block title %}::: AFINCO ::: Despesas - Lista{% endblock title %}
+
+{% block content %}
+
+    {% if user|has_role:'oficial,contador' %}
+    <a href="{% url 'despesa_new' %}" rule="button" class="btn btn-outline-success float-right">+ Novo</a>
+    {% endif %}
+
+    <a href="#" data-toggle="collapse" rule="button" class="btn btn-sm btn-outline-info float-right mr-2" data-target="#filtrar" style="padding-bottom: .45rem;">
+        <svg class="i-filtrar" viewBox="0 0 32 32" width="24" height="24" fill="none" stroke="currentcolor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2">
+            <circle cx="14" cy="14" r="12"></circle>
+            <path d="M23 23 L30 30"></path>
+        </svg>
+    </a>
+
+    {% if filter.form.cleaned_data %}
+    <a class="mx-3 my-2 float-right small text-info" href="{% url 'despesa_list' %}">Limpar Filtros</a>
+    {% endif %}
+
+    <h3>Despesas</h3>
+
+    <div id="filtrar" class="collapse">
+        <!-- busca //-->
+        <div class="card">
+            <div class="card-header">
+                Filtrar Despesas
+            </div>
+            <form action="" method="get">
+                <div class="card-body">
+
+                    <div class="row">
+
+                        <div class="form-group col-sm-12 col-md-7 col-lg-4 col-xl-3">
+                            {{ filter.form.ds.label_tag }}
+                            <div class="form-row">
+                                {{ filter.form.ds }}
+                            </div>
+                            <small class="form-text text-muted">{{ filter.form.ds.help_text }}</small>
+                        </div>
+
+                        <div class="form-group col-sm-6 col-md-5 col-lg-4 col-xl-3">
+                            {{ filter.form.dd.label_tag }}
+                            <div class="form-row">
+                                {{ filter.form.dd }}
+                            </div>
+                            <small class="form-text text-muted">{{ filter.form.dd.help_text }}</small>
+                        </div>
+
+                        <div class="form-group col-sm-6 col-md-5 col-lg-4 col-xl-3">
+                            {{ filter.form.vl.label_tag }}
+                            <div class="form-row">
+                                {{ filter.form.vl }}
+                            </div>
+                            <small class="form-text text-muted">{{ filter.form.vl.help_text }}</small>
+                        </div>
+
+                        <div class="form-group col-sm-12 col-md-7 col-lg-4 col-xl-3">
+                            {{ filter.form.ct.label_tag }}
+                            <div class="form-row">
+                                {{ filter.form.ct }}
+                            </div>
+                            <small class="form-text text-muted">{{ filter.form.ct.help_text }}</small>
+                        </div>
+
+                    </div>
+
+                </div>
+                <div class="card-footer">
+                    <button id="btn_busca" type="submit" class="btn btn-lg btn-primary btn-block">
+                        Filtrar Despesas
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+    <!-- fim busca //-->
+
+    <br>
+
+    {% if object_list %}
+
+    <div class="table-responsive table-responsive-xl" id='table_list_content'>
+
+        <table class="table table-hover table_link">
+            <thead>
+                <tr>
+                    <th scope="col" style="width: 10%;">Data</th>
+                    <th scope="col">Histórico</th>
+                    <th scope="col">Categoria</th>
+                    <th scope="col" style="width: 15%;">Valor</th>
+                </tr>
+            </thead>
+            <tbody>
+            {% for despesa in object_list %}
+                <tr data-href="{% url 'despesa_detail' despesa.pk %}">
+                    <td>{{ despesa.data_despesa|date:'d/m/Y' }}</td>
+                    <td>{{ despesa.identificacao|truncatewords:10 }}</td>
+                    <td>{% if despesa.categoria_despesa %}{{ despesa.categoria_despesa|truncatewords:10 }}{% else %}---{% endif %}</td>
+                    <td>R$ {{ despesa.valor|floatformat:2|intseparator }}</td>
+                </tr>
+
+            {% endfor %}
+            </tbody>
+        </table>
+
+    </div>
+    {% else %}
+        <p class="text-muted">Não há despesas para serem exibidas.</p>
+    {% endif %}
+
+    <br><br>
+
+    {% if is_paginated %}
+        {% include "pagination.html" %}
+    {% endif %}
+
+{% endblock content %}
+
+{% block javascript %}
+    <script src="{% static 'js/table_link.js' %}"></script>
+{% endblock javascript %}

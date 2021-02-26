@@ -1,0 +1,21 @@
+{% extends "base.html" %}
+{% load permission_tags %}
+
+{% block title %}::: AFINCO ::: Categorias - Remover{% endblock title %}
+
+{% block content %}
+    <h3>Categorias de Despesas</h3>
+    <span class="text-muted">Remover categoria: <b>{{ categoriadespesa }}</b></span>
+    <br /><br />
+    <form action="" method="post">
+        {% csrf_token %}
+        <p>Você tem certeza que deseja remover permanentemente esta categoria?</p>
+        <span class="text-muted float-right">
+            <a href="{% url 'categoria_despesa_detail' categoriadespesa.pk %}" class="btn btn-outline-secondary" rule="button">Cancelar</a>
+            {% if user|has_role:'oficial,contador' %}
+            <input type="submit" class="btn btn-outline-danger" value="Sim! Remover!">
+            {% endif %}
+        </span>
+    </form>
+    <br />
+{% endblock content %}

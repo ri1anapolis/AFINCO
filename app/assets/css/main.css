@@ -1,0 +1,253 @@
+.proj-btn-override {
+  padding: 0.275rem 0.35rem;
+  font-size: 0.7rem;
+}
+.proj-center-div {
+  width: 100%;
+  min-height: 150px;
+  margin: 0 auto;
+  overflow: hidden;
+  padding: 10px 0;
+  align-items: center;
+  justify-content: space-around;
+  display: flex;
+  float: none;
+}
+.proj-center-div-sub {
+  width: 500px;
+  min-height: 150px;
+  margin: 0;
+  padding: 1rem 3rem 2rem 3rem;
+  align-items: left;
+  background-color: rgb(255, 255, 255);
+}
+.proj-list-margin-top {
+  margin-top: 5px;
+}
+a,
+a:hover {
+  text-decoration: none;
+}
+.navbar-brand {
+  margin-right: 60px;
+}
+.navbar-nav .nav-item {
+  margin-left: 30px;
+}
+.proj-select-proc-list {
+  max-width: 180px;
+  padding: 0;
+  margin: 0;
+  max-height: 30px;
+  display: inline;
+  font-size: 0.9rem;
+}
+.proj-span-proc-list {
+  min-width: 350px;
+  text-align: right;
+}
+.proj-card-body {
+  -webkit-box-flex: 1;
+  -ms-flex: 1 1 auto;
+  flex: 1 1 auto;
+  padding: 0.3rem;
+}
+.proj-card-header {
+  padding: 0.3rem;
+  margin: 0;
+  background-color: rgba(0, 0, 0, 0.03);
+  border-bottom: 1px solid rgba(0, 0, 0, 0.125);
+}
+.proj-card-header-disabled {
+  padding: 0 0.3rem;
+  margin: 0;
+  background-color: rgba(0, 0, 0, 0.03);
+  border-bottom: 1px solid rgba(0, 0, 0, 0.125);
+  font-size: 0.75rem;
+}
+.proj-card-header-text {
+  margin: 0;
+  padding: 0;
+  display: inline;
+}
+.proj-card-header:first-child {
+  border-radius: calc(0.25rem - 1px) calc(0.25rem - 1px) 0 0;
+}
+.proj-card-body {
+  padding: 0.3rem;
+  margin: 0;
+}
+.proj-card-footer {
+  padding: 0.3rem;
+  background-color: rgba(0, 0, 0, 0.03);
+  border-top: 1px solid rgba(0, 0, 0, 0.125);
+  font-size: small;
+  color: #545b62;
+}
+.proj-card-footer:last-child {
+  border-radius: 0 0 calc(0.25rem - 1px) calc(0.25rem - 1px);
+}
+.proj-card-title {
+  margin: 0;
+}
+.proj-card-subtitle {
+  margin: 0;
+}
+.proj-card-text:last-child {
+  margin: 0;
+  font-size: small;
+}
+.proj-card-block-link {
+  color: inherit;
+}
+.proj-card-block-link:hover {
+  color: inherit;
+}
+.proj-link-disabled {
+  cursor: default !important;
+}
+.proj-card-block:hover {
+  border-color: #17a2b8;
+}
+.proj-card {
+  margin-bottom: 0.3rem;
+}
+.proj-card-disabled {
+  color: #c3c3c3;
+}
+.cards_counters {
+  float: right;
+  font-size: 0.7em;
+  margin: -5px -3px 0 0;
+  color: var(--secondary);
+}
+.glyph-icon {
+  width: 16px;
+  height: 16px;
+  fill: #fff !important;
+}
+.glyph-icon-pencil {
+  fill: #fff !important;
+}
+.btn-glyph {
+  padding: 0;
+}
+.noshadow,
+.noshadow:focus {
+  -webkit-box-shadow: none !important;
+  -moz-box-shadow: none !important;
+  box-shadow: none !important;
+  outline: none !important;
+}
+.btn-outline-primary.noshadow:hover {
+  color: #007bff !important;
+  background-color: #fff !important;
+  border-color: #007bff !important;
+}
+.btn-outline-primary.active.noshadow:hover {
+  color: #fff !important;
+  background-color: #007bff !important;
+  border-color: #007bff !important;
+}
+.border_curve {
+  border-radius: 0.25rem !important;
+}
+.proj-font-small {
+  font-size: 85% !important;
+}
+.proj-card-div {
+  font-size: small;
+  color: #545b62;
+}
+.proj-simple-row {
+  display: flex;
+  flex-wrap: wrap;
+  margin: 0;
+  padding: 0;
+}
+.proj-btn-deadgreen {
+  background-color: #d8dfd8;
+  border-color: #ced4ce;
+}
+.proj-btn-deadgreen:hover {
+  background-color: #d0d7d0;
+}
+.proj-select-no-caret {
+  background: transparent;
+  font-size: 16px;
+  -webkit-appearance: none;
+  -moz-appearance: none;
+  appearance: none;
+}
+.proj-car-item-list-wrap {
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+.proj-selected-item-list {
+  border-left: 3px solid purple;
+  padding-left: -30px;
+}
+.proj-text-overflow {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.background {
+  position: absolute;
+  display: block;
+  top: 0;
+  left: 0;
+  z-index: -1;
+}
+input[type='date']::-webkit-inner-spin-button,
+input[type='date']::-webkit-outer-spin-button,
+input[type='date']::-webkit-clear-button {
+  -webkit-appearance: none;
+  margin: 0;
+}
+input[type='date']::-webkit-calendar-picker-indicator {
+  margin: 0;
+  padding: 7px 3px;
+}
+
+@-moz-document url-prefix() {
+  textarea {
+    overflow-x: hidden;
+  }
+}
+
+@media (min-width: 576px) {
+  .card-columns {
+    column-count: 2;
+  }
+}
+@media (min-width: 768px) {
+  .card-columns {
+    column-count: 3;
+  }
+}
+@media (min-width: 992px) {
+  .card-columns {
+    column-count: 4;
+  }
+}
+@media (min-width: 1200px) {
+  .card-columns {
+    column-count: 5;
+  }
+}
+.ui-autocomplete {
+  max-height: 500px;
+  overflow-y: auto;
+  /* prevent horizontal scrollbar */
+  overflow-x: hidden;
+  /* add padding to account for vertical scrollbar */
+  padding-right: 20px;
+}
+/* IE 6 doesn't support max-height
+ * we use height instead, but this forces the menu to always be this tall
+ */
+* html .ui-autocomplete {
+  height: 500px;
+}

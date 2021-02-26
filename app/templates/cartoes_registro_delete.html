@@ -1,0 +1,23 @@
+{% extends "base.html" %}
+{% load permission_tags %}
+
+{% block title %}::: AFINCO ::: Registros de Cartões - Remover{% endblock title %}
+
+{% block content %}
+    <h3>Clientes</h3>
+    <span class="text-muted">Remover registro: <b>{{ registro }}</b></span>
+    <br /><br />
+    <div class="row col-8">
+        <form method="post">
+            {% csrf_token %}
+            <p>Você tem certeza que deseja remover este registro de pagamento com cartão permanentemente?</p>
+            <span class="text-muted float-right">
+                <a href="{% url 'cartoes' %}" class="btn btn-outline-secondary" rule="button">Cancelar</a>
+                {% if user|has_role:'oficial,contador,supervisor_atendimento,atendente' %}
+                <input type="submit" class="btn btn-outline-danger" value="Sim! Remover!">
+                {% endif %}
+            </span>
+        </form>
+    </div>
+    <br />
+{% endblock content %}

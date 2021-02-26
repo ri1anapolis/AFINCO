@@ -1,0 +1,85 @@
+{% extends "base.html" %}
+
+{% block title %}::: AFINCO ::: Reposição de caixa{% endblock title %}
+
+{% block content %}
+    <h3>Reposição de Caixa</h3>
+    <span class="text-muted">Quantidades de cada modelo de moeda necessários para compor o caixa.</span>
+    <br><br>
+
+    <div class="table-responsive table-responsive-xl">
+
+        <table class="table table-bordered table-sm table-hover">
+            <thead class="thead-light">
+                <tr>
+                    <th scope='col'>Usuários</th>
+                    <th scope='col' class="text-center text-nowrap">R$ 0,01</th>
+                    <th scope='col' class="text-center text-nowrap">R$ 0,05</th>
+                    <th scope='col' class="text-center text-nowrap">R$ 0,10</th>
+                    <th scope='col' class="text-center text-nowrap">R$ 0,25</th>
+                    <th scope='col' class="text-center text-nowrap">R$ 0,50</th>
+                    <th scope='col' class="text-center text-nowrap">R$ 1,00</th>
+                    <th scope='col' class="text-center text-nowrap">R$ 2,00</th>
+                    <th scope='col' class="text-center text-nowrap">R$ 5,00</th>
+                    <th scope='col' class="text-center text-nowrap">R$ 10,00</th>
+                    <th scope='col' class="text-center text-nowrap">R$ 20,00</th>
+                    <th scope='col' class="text-center text-nowrap">R$ 50,00</th>
+                    <th scope='col' class="text-center text-nowrap">R$ 100,00</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for f_caixa in f_caixas %}
+                {% if forloop.last %}
+                <tr>
+                    <th scope='row' class="text-secondary">{{ f_caixa.usuario }}</th>
+                    <th scope="row" class="text-secondary text-center">{{ f_caixa.qtd_moeda_01cent }}</th>
+                    <th scope="row" class="text-secondary text-center">{{ f_caixa.qtd_moeda_05cent }}</th>
+                    <th scope="row" class="text-secondary text-center">{{ f_caixa.qtd_moeda_10cent }}</th>
+                    <th scope="row" class="text-secondary text-center">{{ f_caixa.qtd_moeda_25cent }}</th>
+                    <th scope="row" class="text-secondary text-center">{{ f_caixa.qtd_moeda_50cent }}</th>
+                    <th scope="row" class="text-secondary text-center">{{ f_caixa.qtd_moeda_01real }}</th>
+                    <th scope="row" class="text-secondary text-center">{{ f_caixa.qtd_moeda_02reais }}</th>
+                    <th scope="row" class="text-secondary text-center">{{ f_caixa.qtd_moeda_05reais }}</th>
+                    <th scope="row" class="text-secondary text-center">{{ f_caixa.qtd_moeda_10reais }}</th>
+                    <th scope="row" class="text-secondary text-center">{{ f_caixa.qtd_moeda_20reais }}</th>
+                    <th scope="row" class="text-secondary text-center">{{ f_caixa.qtd_moeda_50reais }}</th>
+                    <th scope="row" class="text-secondary text-center">{{ f_caixa.qtd_moeda_100reais }}</th>
+                </tr>
+                {% else %}
+                <tr>
+                    <th scope='row' class="text-secondary">{{ f_caixa.usuario }}</th>
+                    <td class="text-center">{{ f_caixa.qtd_moeda_01cent }}</td>
+                    <td class="text-center">{{ f_caixa.qtd_moeda_05cent }}</td>
+                    <td class="text-center">{{ f_caixa.qtd_moeda_10cent }}</td>
+                    <td class="text-center">{{ f_caixa.qtd_moeda_25cent }}</td>
+                    <td class="text-center">{{ f_caixa.qtd_moeda_50cent }}</td>
+                    <td class="text-center">{{ f_caixa.qtd_moeda_01real }}</td>
+                    <td class="text-center">{{ f_caixa.qtd_moeda_02reais }}</td>
+                    <td class="text-center">{{ f_caixa.qtd_moeda_05reais }}</td>
+                    <td class="text-center">{{ f_caixa.qtd_moeda_10reais }}</td>
+                    <td class="text-center">{{ f_caixa.qtd_moeda_20reais }}</td>
+                    <td class="text-center">{{ f_caixa.qtd_moeda_50reais }}</td>
+                    <td class="text-center">{{ f_caixa.qtd_moeda_100reais }}</td>
+                </tr>
+                {% endif %}
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+    <br>
+    <div class="row">
+        <div class="col-12">
+            <small class="text-danger">
+                <ul class="pl-3">
+                    <li>
+                        Valores negativos representam excedentes, ou seja, quantidades de dinheiro em espécie sobrando no caixa e que devem ser devolvidos ao cofre.
+                    </li>
+                </ul>
+            </small>
+        </div>
+    </div>
+
+{% endblock content %}
+
+{% block javascript %}
+{% endblock javascript %}

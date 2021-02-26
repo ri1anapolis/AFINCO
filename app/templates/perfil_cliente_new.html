@@ -1,0 +1,69 @@
+{% extends 'base.html' %}
+{% load permission_tags %}
+{% load crispy_forms_tags %}
+
+{% block title %}::: AFINCO ::: Perfil de Cliente - Adicionar{% endblock title %}
+
+{% block content %}
+
+    <h3>Perfís de Clientes</h3>
+    <span class="text-muted">Adicionar novo perfil</span>
+    <br><br>
+
+    <form action="" method="post">
+        {% csrf_token %}
+
+        <div class="form-row">
+            <div class="col-md-8">
+                {{ form.nome|as_crispy_field }}
+            </div>
+        </div>
+
+        <div class="form-row">
+            <div class="col-md-8">
+                {{ form.descricao|as_crispy_field}}
+            </div>
+        </div>
+
+        <div class="form-row">
+            <div class="col-md-3">
+                {{ form.periodo_pag|as_crispy_field}}
+            </div>
+        </div>
+
+        <div class="form-row">
+            <div class="col-md-8">
+                {{ form.ativo|as_crispy_field}}
+            </div>
+        </div>
+
+        <br>
+
+        <div class="form-row">
+            <div class="col-md-8">
+                <span class="text-muted float-right">
+                    <a href="{% url 'perfil_cliente_list' %}" class="btn btn-outline-secondary" rule="button">Cancelar</a>
+                    {% if user|has_role:'oficial,contador' %}
+                    <input type="submit" class="btn btn-outline-success ml-2" value="Salvar">
+                    {% endif %}
+                </span>
+            </div>
+        </div>
+
+        <br>
+
+    </form>
+
+    <br>
+
+{% endblock content %}
+
+{% block javascript %}
+    <script type='text/javascript'>
+        $(document).ready(function(){
+            if ( $('#id_nome').length > 0 ){
+                $('#id_nome').focus();
+            }
+        });
+    </script>
+{% endblock javascript %}

@@ -1,0 +1,94 @@
+{% extends 'base.html' %}
+{% load permission_tags %}
+{% load crispy_forms_tags %}
+
+{% block title %}::: AFINCO ::: Serviços - Editar{% endblock title %}
+
+{% block content %}
+
+    <h3>Serviços aos Clientes</h3>
+    <span class="text-muted">Alterar o serviço: {{ clienteservicos }}</span>
+    <br><br>
+
+    <form method="post">
+        {% csrf_token %}
+
+        <div class="form-row">
+            <div class="col-sm-12 col-md-10 col-lg-8">
+                {{ form.cliente|as_crispy_field }}
+            </div>
+        </div>
+
+        <div class="row">
+            <div class="col-sm-6 col-md-4 col-lg-3">
+                {{ form.data|as_crispy_field }}
+            </div>
+            <div class="col-sm-6 col-md-4 col-lg-3">
+                {{ form.valor|as_crispy_field }}
+            </div>
+        </div>
+
+        <div class="form-row">
+            <div class="col-sm-4 col-md-3 col-lg-2">
+                {{ form.tipo_protocolo|as_crispy_field }}
+            </div>
+            <div class="col-sm-6 col-md-4 col-lg-3">
+                {{ form.protocolo|as_crispy_field }}
+            </div>
+        </div>
+
+        <div class="form-row">
+            <div class="col-sm-12 col-md-10 col-lg-8">
+                {{ form.observacoes|as_crispy_field }}
+            </div>
+        </div>
+
+        <div class="form-row">
+            <div class="col-sm-12 col-md-4">
+                {{ form.liquidado|as_crispy_field }}
+            </div>
+            <div class="col-sm-12 col-md-4">
+                {{ form.contabilizar|as_crispy_field }}
+            </div>
+        </div>
+
+        {% if clienteservicos.caixa and clienteservicos.caixa is not None %}
+        <div class="row">
+            <div class="col-sm-12 col-md-10 col-lg-8">
+                <small class="text-danger text-justify">
+                    Devido ao serviço ter sido gerado via fechamento de caixa, sua edição está parcialmente bloqueada
+                    para garantir a integridade das informações. Ainda é possível alterar os campos "Observações" e "Liquidado?"!
+                </small>
+            </div>
+        </div>
+        {% endif %}
+
+        <br>
+
+        <div class="form-row">
+            <div class="col-sm-12 col-md-8">
+                <span class="text-muted float-right">
+                    <a href="{% url 'cliente_servicos_detail' clienteservicos.pk %}" class="btn btn-outline-secondary" rule="button">Cancelar</a>
+                    {% if user|has_role:'oficial,contador' %}
+                    <input type="submit" class="btn btn-outline-success ml-2" value="Salvar">
+                    {% endif %}
+                </span>
+            </div>
+        </div>
+
+        <br>
+
+    </form>
+
+    <br>
+
+{% endblock content %}
+
+{% block javascript %}
+    <script>
+        if($('#id_data').length > 0){
+            $('#id_data').get(0).type = 'date';
+            $('#id_data').prop('value', "{{ clienteservicos.data|date:'Y-m-d' }}");
+        }
+    </script>
+{% endblock javascript %}

@@ -1,0 +1,164 @@
+{% load compress %}
+{% load static %}
+{% load project_tags %}
+<!DOCTYPE html>
+<html lang="pt=br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <title>::: AFINCO ::: Registros de Cartões - Recibo</title>
+{% compress css %}
+    <style type="text/css" media="print">
+        @page { 
+            size: landscape;
+        }
+        body { 
+            writing-mode: tb-rl;
+            height: 100vh;
+        }
+        .landscape-col-6 {
+            height: 50vh;
+        }
+        .landscape-border-top {
+            border-right: 1px solid #d3d3d3;
+            padding: 15px 0 15px 0;
+        }
+        .landscape-col-pad {
+            height: 14%;
+        }
+        .landscape-col-pad-sm {
+            height: 8%;
+        }
+        .landscape-col-pad-lg {
+            height: 18%;
+        }
+        #link-voltar {
+            display: none;
+        }
+        img, .rotate {
+            /*
+                Note that css transforms aren't applied on inline elements like <span>.
+                You will need to specify display:block; or display:inline-block for it to work on inline elements.
+            */
+            -moz-transform: rotate(90deg);
+            -ms-transform: rotate(90deg);
+            -o-transform: rotate(90deg);
+            -webkit-transform: rotate(90deg);
+            transform: rotate(90deg);
+            display: inline-block;
+        }
+        .citacao {
+            border-top: 5px solid #eee;
+            padding: 10px 0 0 0;
+        }
+        .citacao_fonte {
+            margin: 50px 0 0 0;
+        }
+    </style>
+    <style type="text/css" media="screen">
+        .landscape-col-pad {
+            width: 14%;
+        }
+        .landscape-col-pad-sm {
+            width: 8%;
+        }
+        .landscape-col-pad-lg {
+            width: 18%;
+        }
+        #link-voltar {
+            display: block;
+        }
+        .citacao {
+            border-left: 5px solid rgb(207, 207, 207);
+            padding: 0 0 0 10px;
+        }
+        .citacao_fonte {
+            margin: 0 0 0 50px;
+        }
+    </style>
+    <link rel="stylesheet" href="{% static "css/bootstrap.min.css" %}" type="text/css"> <!--  Bootstrap 4.3.1 CSS -->
+    <link rel="stylesheet" href="{% static "css/main.css" %}" type="text/css"> <!-- o trecho ?v=00002 ajuda a atualizar o cache dos arquivos estáticos. basta incrementar o numero! /!-->
+{% endcompress %}
+    <title>Recibo de Pagamento com Cartão</title>
+</head>
+<body class="p-0" onload="window.print()">
+<div class="container">
+    <section class="col-8 border border-dark mt-3 m-0 p-0 landscape-col-6">
+
+        <header class="d-flex flex-row align-middle border border-dark p-2">
+            <section class="p-0" style="width: 95px; height: 120px;">
+                <img src="{% static 'svg/LOGO.svg'%}" alt="Logo CRI1" width="100%" height="100%" class="float-left">
+            </section>
+            <section class="w-100 h-100 p-0 text-center">
+                <h5 class="m-0">CARTÓRIO DE REGISTRO DE IMÓVEIS</h5>
+                <h5 class="m-0 mb-1">1ª CIRCUNSCRIÇÃO DE ANÁPOLIS - GO</h5>
+                <p class="m-0">Avenida Universitária º 2221, Anashopping, LUC º 100, CEP 75.083-350</p>
+                <p class="m-0">contato@ri1anapolis.com.br - Fone: (62) 3937-4650 - CNPJ: 02.790.566/0001-90</p>
+                <p class="m-0 mt-1">Oficial: Wander Ribeiro Palhano</p>
+            </section>
+        </header>
+
+        <section class="border border-dark p-2">
+            <div class="w-100">
+                <strong>Protocolo: {{ recibo.protocolo }}</strong>
+            </div>
+            <div class="d-flex flex-row" style="font-size: 95%;">
+                <span class="text-center landscape-col-pad">Bandeira</span>
+                <span class="text-center landscape-col-pad">Operação</span>
+                <span class="text-center landscape-col-pad">Parcelas</span>
+                <span class="text-center landscape-col-pad-sm">Taxa</span>
+                <span class="text-center landscape-col-pad">Tarifa</span>
+                <span class="text-center landscape-col-pad-lg">Valor Serviço</span>
+                <span class="text-center landscape-col-pad-lg">Valor Cobrança</span>
+            </div>
+            <div class="d-flex flex-row" style="font-size: 95%;">
+                <span class="text-center font-weight-light landscape-col-pad">{{ recibo.bandeira }}</span>
+                <span class="text-center font-weight-light landscape-col-pad">{{ recibo.get_operacao_display }}</span>
+                <span class="text-center font-weight-light landscape-col-pad">{% if recibo.parcelas %}{{ recibo.parcelas }}{% else %}N/A{% endif %}</span>
+                <span class="text-center font-weight-light landscape-col-pad-sm">{{ recibo.taxa_juros|floatformat:2|intseparator }}%</span>
+                <span class="text-center font-weight-light landscape-col-pad">R${{ recibo.valor_taxa|floatformat:2|intseparator }}</span>
+                <span class="text-center font-weight-light landscape-col-pad-lg">R${{ recibo.valor_servico|floatformat:2|intseparator }}</span>
+                <span class="text-center font-weight-light landscape-col-pad-lg">R${{ recibo.valor_cobrado|floatformat:2|intseparator }}</span>
+            </div>
+        </section>
+
+        <section class="border border-dark p-2 font-weight-light">
+
+            <section>
+                <p class="text-justify citacao m-0 strong">
+                    <strong>É permitido o repasse aos usuários do serviço extrajudicial das taxas cobradas pelas instituições financeiras e operadoras de cartões pelo uso de seus mecanismos de cobrança.</strong>
+                </p>
+                <p class="citacao_fonte">
+                    (Art. 16-A, <span class="rotate">&sect;</span>1º, do Código de Normas e Procedimentos do Foro Extrajudicial do Estado de Goiás;
+                    Provimento nº 23-2019, <span class="rotate">&sect;</span>1º, da Corregedoria-Geral da Justiça do Estado De Goiás).
+                </p>
+        </section>
+            <section class="mt-5">
+                <p>Anápolis, {{ recibo.data_registro }}.</p>
+            </section>
+            <section class="text-center p-2 mt-4">
+                <span class="landscape-border-top">
+                    {% if recibo.usuario.first_name %}
+                        {{ recibo.usuario.first_name }}
+                        {% if recibo.usuario.last_name %} {{ recibo.usuario.last_name }}{% endif %}
+                    {% else %}
+                        {{ recibo.usuario }}
+                    {% endif %}
+                </span>
+            </section>
+        </section>
+
+    </section>
+
+    <a href="{% url "cartoes" %}" id="link-voltar" class="btn btn-primary fixed-bottom mt-5">
+    <strong>Voltar para Cartões</strong>
+    </a>
+
+</div>
+
+{% compress js %}
+    <script src="{% static 'js/jquery.min.js' %}"></script><!-- jquery 3.4.0 -->
+    <script src="{% static 'js/bootstrap.bundle.min.js' %}"></script> <!-- bootstrap 4.3.1 + popper 1.14.7 -->
+{% endcompress %}
+</body>
+</html>

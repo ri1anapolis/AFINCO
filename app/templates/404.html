@@ -1,0 +1,33 @@
+{% extends 'base.html' %}
+{% load static %}
+{% load project_tags %}
+
+{% block title %}::: AFINCO ::: 404{% endblock title %}
+
+{% block content %}
+    <br><br>
+    <br><br>
+    <div class="proj-center-div text-light">
+        <div class="col-12 text-center">
+            <h1 class='display-1 font-weight-bold'>404</h1>
+            <h2 class='display-4'>Página não encontrada!</h2>
+            <br>
+            <p class='lead'>A página que você procura não existe!</p>
+            <p class='lead'>Caso você acredite que isto seja um erro, procure o suporte técnico!</p>
+        </div>
+    </div>
+
+    <div class="text-center text-muted fixed-bottom">
+        <small>{% project_version %}</small>
+    </div>
+{% endblock content %}
+
+{% block javascript %}
+    <script src="{% static 'js/particles.min.js' %}"></script>
+    <script src="{% static 'js/particles_init.js' %}"></script>
+    <script type="text/javascript">
+        $(function(){
+            $('.background').css('background-color', '#343a40');
+        });
+    </script>
+{% endblock javascript %}

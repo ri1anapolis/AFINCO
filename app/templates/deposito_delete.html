@@ -1,0 +1,18 @@
+{% extends "base.html" %}
+
+{% block title %}::: AFINCO ::: Depósitos - Apagar{% endblock title %}
+
+{% block content %}
+    <h3>Depósitos</h3>
+    <span class="text-muted">Apagar depósito bancário: <b>{{ depositos.identificacao }} ( R$ {{ depositos.valor }} )</b></span>
+    <br /><br />
+    <form action="" method="post">
+        {% csrf_token %}
+        <p>Você tem certeza que deseja apagar este registro de depósito bancário?</p>
+        <span class="text-muted float-right">
+            <a href="{% url 'deposito_detail' depositos.pk %}" class="btn btn-outline-secondary" rule="button">Cancelar</a>
+            <input type="submit" class="btn btn-outline-danger" value="Sim! Apagar!">
+        </span>
+    </form>
+    <br />
+{% endblock content %}

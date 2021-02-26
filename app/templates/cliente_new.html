@@ -1,0 +1,126 @@
+{% extends 'base.html' %}
+{% load permission_tags %}
+{% load crispy_forms_tags %}
+
+{% block title %}::: AFINCO ::: Clientes - Adicionar{% endblock title %}
+
+{% block content %}
+
+    <h3>Clientes</h3>
+    <span class="text-muted">Adicionar novo cliente</span>
+    <br><br>
+
+    <form action="" method="post">
+        {% csrf_token %}
+
+        <div class="form-row">
+            <div class="col-md-12 col-lg-9 col-xl-8">
+                {{ form.outorgante|as_crispy_field }}
+            </div>
+        </div>
+
+        <div class="form-row">
+            <div class="col-md-12 col-lg-9 col-xl-8">
+                {{ form.nome|as_crispy_field }}
+            </div>
+        </div>
+
+        <div class="form-row">
+            <div class="col-sm-5 col-md-4 col-lg-3 col-xl-3">
+                {{ form.perfil|as_crispy_field}}
+            </div>
+        </div>
+
+        <div class="form-row">
+            <div class="col-sm-5 col-md-4 col-lg-3 col-xl-2">
+                {{ form.tipo_documento|as_crispy_field}}
+            </div>
+            <div class="col-sm-7 col-md-5 col-lg-4 col-xl-3" id='field-cpf' style="display:none;">
+                {{ form.cpf|as_crispy_field}}
+            </div>
+            <div class="col-sm-7 col-md-5 col-lg-4 col-xl-3" id='field-cnpj' style="display:none;">
+                {{ form.cnpj|as_crispy_field}}
+            </div>
+            <div class="col-sm-7 col-md-5 col-lg-4 col-xl-3" id='field-estrangeiro' style="display:none;">
+                {{ form.estrangeiro|as_crispy_field}}
+            </div>
+        </div>
+
+        <div class="form-row">
+            <div class="col-md-4 col-lg-3 col-xl-3">
+                {{ form.telefone|as_crispy_field}}
+            </div>
+            <div class="col-md-8 col-lg-6 col-xl-5">
+                {{ form.email|as_crispy_field}}
+            </div>
+        </div>
+
+        <div class="form-row">
+            <div class="col-md-12 col-lg-9 col-xl-8">
+                {{ form.endereco|as_crispy_field}}
+            </div>
+        </div>
+
+        <div class="form-row">
+            <div class="col-md-6 col-lg-4 col-xl-4">
+                {{ form.ativo|as_crispy_field}}
+            </div>
+            <div class="col-md-6 col-lg-5 col-xl-4">
+                {{ form.verifica_saldo|as_crispy_field}}
+            </div>
+        </div>
+
+        <br>
+
+        <div class="form-row">
+            <div class="col-md-12 col-lg-9 col-xl-8">
+                <span class="text-muted float-right">
+                    <a href="{% url 'cliente_list' %}" class="btn btn-outline-secondary" rule="button">Cancelar</a>
+                    {% if user|has_role:'oficial,contador,supervisor_atendimento' %}
+                    <input type="submit" class="btn btn-outline-success ml-2" value="Salvar">
+                    {% endif %}
+                </span>
+            </div>
+        </div>
+
+        <br>
+
+    </form>
+
+    <br>
+
+{% endblock content %}
+
+{% block javascript %}
+    <script>
+        function hide_div(){
+            var div_tipo_doc = {
+                'PJ': 'field-cnpj',
+                'PF': 'field-cpf',
+                'EX': 'field-estrangeiro',
+            }
+
+            var selected = $("#id_tipo_documento")
+            selected.find('option').each(function(){
+                var option = $(this)
+                if (option.val() == selected.val()){
+                    $('#'  + div_tipo_doc[option.val()]).show();
+                } else {
+                    $('#' + div_tipo_doc[option.val()]).hide();
+                }
+            });
+        }
+
+        $(document).ready(function(){
+            if ( $('#id_outorgante').length > 0 ){
+                $('#id_outorgante').focus();
+            }
+
+            hide_div();
+
+            $("#id_tipo_documento").change(function(){
+                hide_div();
+            })
+        });
+    </script>
+{% endblock javascript %}

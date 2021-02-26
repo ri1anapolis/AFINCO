@@ -1,0 +1,98 @@
+{% extends 'base.html' %}
+{% load static %}
+{% load project_tags %}
+{% load permission_tags %}
+
+{% block title %}::: AFINCO ::: Categorias - Detalhes{% endblock title%}
+
+{% block content %}
+
+    <h3>Categorias de Despesas</h3>
+    <span class="text-muted">Detalhes da categoria: {{ categoriadespesa }}</span>
+    <br><br>
+
+    <div class="row">
+        <div class="col-sm-12 col-md-12 col-lg-9">
+            <div class="form-group">
+                <label for="id_identificacao" class="col-form-label  requiredField">Descrição</label>
+                <input type="text" id="id_identificacao" class="form-control" value="{{ categoriadespesa.identificacao }}" disabled="true">
+                <small class="form-text text-muted">Discriminação do tipo de despesa.</small>
+            </div>
+        </div>
+    </div>
+
+
+    <div class="form-row">
+        <div class="col-sm-4 col-md-4 col-lg-3">
+            <div class="form-group">
+                <label for="id_codigo_rf" class="col-form-label">Código</label>
+                <input type="text" id="id_codigo_rf" class="form-control" value="{{ categoriadespesa.codigo_rf }}" disabled="true">
+                <small class="form-text text-muted">Código da despesa conforme tabela da Receita Federal.</small>
+            </div>
+        </div>
+        <div class="col-sm-4 col-md-4 col-lg-3">
+            <div class="form-group">
+                <label for="id_conta_credito" class="col-form-label">Conta de Crédito</label>
+                <input type="text" id="id_conta_credito" class="form-control"
+                    value="{% if categoriadespesa.conta_credito %}{{ categoriadespesa.conta_credito }}{% else %}---{% endif %}" disabled="true">
+                <small class="form-text text-muted">Conta onde será creditado o valor.</small>
+            </div>
+        </div>
+        <div class="col-sm-4 col-md-4 col-lg-3">
+            <div class="form-group">
+                <label for="id_conta_debito" class="col-form-label">Conta de Débito</label>
+                <input type="text" id="id_conta_debito" class="form-control"
+                    value="{% if categoriadespesa.conta_debito %}{{ categoriadespesa.conta_debito }}{% else %}---{% endif %}" disabled="true">
+                <small class="form-text text-muted">Conta onde será debitado o valor.</small>
+            </div>
+        </div>
+    </div>
+
+    <div class="form-row">
+        <div class="col-sm-6 col-md-6 col-lg-4">
+           <div class="form-group">
+                <div class="form-check">
+                    <label for="id_ativo" class="form-check-label">
+                        <input type="checkbox" id='id_ativo' class="checkboxinput form-check-input" disabled="true" {% if categoriadespesa.ativo %}checked{% endif %}>
+                        Está ativo?
+                    </label>
+                    <small class="form-text text-muted">Indica se o tipo de despesa está ativo e pode ser utilizado.</small>
+                </div>
+            </div>
+        </div>
+        <div class="col-sm-6 col-md-6 col-lg-5">
+           <div class="form-group">
+                <div class="form-check">
+                    <label for="id_relatorios" class="form-check-label">
+                        <input type="checkbox" id='id_relatorios' class="checkboxinput form-check-input" disabled="true" {% if categoriadespesa.relatorios %}checked{% endif %}>
+                        Relatório?
+                    </label>
+                    <small class="form-text text-muted">Indica se as despesas dessa categoria podem ser consideradas pelos relatórios.</small>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <br>
+
+    <div class="form-row">
+        <div class="col-sm-12 col-md-12 col-lg-9">
+            <span class="text-muted float-right">
+                <a href="{% url 'categoria_despesa_list' %}" class="btn btn-outline-secondary" id="btn_voltar_para_lista" rule="button">Ver Lista</a>
+            {% if request.user.is_superuser or user|has_role:'oficial,contador' %}
+                <a href="{% url 'categoria_despesa_edit' categoriadespesa.pk %}" class="btn btn-outline-primary" rule="button">Editar</a>
+                <a href="{% url 'categoria_despesa_delete' categoriadespesa.pk %}" class="btn btn-outline-danger" rule="button">Apagar</a>
+            {% endif %}
+            </span>
+        </div>
+    </div>
+
+    <br>
+
+    <br>
+
+{% endblock content %}
+
+{% block javascript %}
+    <script src="{% static 'js/voltar_para_lista.js' %}"></script>
+{% endblock javascript %}

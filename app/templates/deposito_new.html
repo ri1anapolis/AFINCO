@@ -1,0 +1,50 @@
+{% extends "base.html" %}
+{% load crispy_forms_tags %}
+
+{% block title %}::: AFINCO ::: Depósitos - Adicionar{% endblock title %}
+
+{% block content %}
+    <h3>Depósitos</h3>
+    <span class="text-muted">Adicionar novo depósito bancário</b></span>
+    <br /><br />
+    <form method="post">{% csrf_token %}
+        <div class="row">
+            <div class="col-md-4 col-lg-3">
+                {{ form.data_deposito|as_crispy_field}}
+            </div>
+            <div class="col-md-5 col-lg-3">
+                {{ form.valor|as_crispy_field}}
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-md-9 col-lg-8">
+                {{ form.identificacao|as_crispy_field }}
+                {{ form.observacoes|as_crispy_field }}
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-md-9 col-lg-8">
+                {{ form.consolidado|as_crispy_field }}
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-md-9 col-lg-8">
+                <span class="text-muted float-right">
+                    <a href="{% url 'deposito_list' %}" class="btn btn-outline-secondary" rule="button">
+                        Cancelar
+                    </a>
+                    <input type="submit" class="btn btn-success ml-2" value="Salvar">
+                    <input type="submit" name="another" class="btn btn-outline-success ml-2" value="Salvar e Adicionar Outro">
+                </span>
+            </div>
+        </div>
+    </form>
+{% endblock content %}
+
+{% block javascript %}
+    <script type='text/javascript'>
+        if($('#id_data_deposito').length > 0){
+            $('#id_data_deposito').prop('value', "{% now 'Y-m-d' %}").focus();
+        }
+    </script>
+{% endblock javascript %}

@@ -1,0 +1,94 @@
+{% extends 'base.html' %}
+{% load static %}
+{% load permission_tags %}
+{% load crispy_forms_tags %}
+
+{% block title %}::: AFINCO ::: Despesa - Adicionar{% endblock title %}
+
+{% block content %}
+
+    <h3>Despesas</h3>
+    <span class="text-muted">Adicionar nova despesa</span>
+    <br><br>
+
+    <form method="post">
+        {% csrf_token %}
+
+        <div class="form-row">
+            <div class="col-sm-4 col-md-3 col-lg-2">
+                {{ form.data_despesa|as_crispy_field }}
+            </div>
+            <div class="col-sm-5 col-md-4 col-lg-3">
+                {{ form.valor|as_crispy_field }}
+            </div>
+        </div>
+
+        <div class="form-row">
+            <div class="col-sm-12 col-md-10 col-lg-7">
+                {{ form.identificacao|as_crispy_field }}
+            </div>
+        </div>
+
+        <div class="form-row">
+            <div class="col-sm-12 col-md-10 col-lg-7">
+                {{ form.categoria_despesa|as_crispy_field }}
+            </div>
+        </div>
+
+        <div class="form-row">
+            <div class="col-sm-12 col-md-10 col-lg-7">
+                {{ form.observacoes|as_crispy_field }}
+            </div>
+        </div>
+
+        <div class="form-row">
+            <div class="col-sm-12 col-md-10 col-lg-7">
+                {{ form.contabilizar_cofre|as_crispy_field }}
+            </div>
+        </div>
+
+        <br>
+
+        <div class="form-row">
+            <div class="col-sm-12 col-md-10 col-lg-7">
+                <span class="text-muted float-right">
+                    <a href="{% url 'despesa_list' %}" id="btn_voltar_para_lista" class="btn btn-outline-secondary" rule="button">Cancelar</a>
+                    {% if user|has_role:'oficial,contador' %}
+                    <input type="submit" class="btn btn-success ml-2" value="Salvar">
+                    <input type="submit" name="another" class="btn btn-outline-success ml-2" value="Salvar e Adicionar Outro">
+                    {% endif %}
+                </span>
+            </div>
+        </div>
+
+        <br>
+
+    </form>
+
+    <br>
+
+{% endblock content %}
+
+{% block javascript %}
+    <script type="text/javascript">
+        if($('#id_data_despesa').length > 0){
+            $('#id_data_despesa').get(0).type = 'date';
+            $('#id_data_despesa').prop('value', "{% now 'Y-m-d' %}");
+            $('#id_data_despesa').focus();
+        }
+    </script>
+    {{ form.media.js }}
+    <script>
+        $( "#dropdown" ).select2({
+            theme: "bootstrap"
+        });
+    </script>
+    <script>
+        $.fn.select2.defaults.set( "theme", "bootstrap" );
+    </script>
+{% endblock javascript %}
+
+{% block css %}
+    {{ form.media.css }}
+    <link rel="stylesheet" href="{% static "css/select2-bootstrap.css" %}" type="text/css">
+{% endblock css %}

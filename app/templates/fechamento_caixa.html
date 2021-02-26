@@ -1,0 +1,1275 @@
+{% extends "base.html" %}
+{% load static %}
+{% load permission_tags %}
+
+{% block title %}::: AFINCO ::: Fechamento de Caixa{% endblock title %}
+
+{% block content %}
+
+    <div class="col-1 float-right p-0 m-0">
+        <a href="#" data-toggle="collapse" rule="button" class="btn btn-sm btn-outline-info float-right mr-2" data-target="#search" style="padding-bottom: .45rem;">
+            <svg class="i-search" viewBox="0 0 32 32" width="24" height="24" fill="none" stroke="currentcolor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2">
+                <circle cx="14" cy="14" r="12"></circle>
+                <path d="M23 23 L30 30"></path>
+            </svg>
+        </a>
+    </div>
+    <div class="row col-sm-11 col-md-11 col-lg-11">
+        <div class="col-md-12 col-lg-5">
+            <h3>Fechamento de Caixa</h3>
+        </div>
+        <div class="col-md-12 col-lg-7">
+            <span><h4 id="f_caixa_desc" class="text-muted"></h4></span>
+        </div>
+
+    </div>
+    <div id="search" class="collapse">
+        <!-- busca //-->
+        <div class="card">
+            <div class="card-header">
+                Buscar Fechamento de Caixa
+            </div>
+            <div class="card-body">
+                <div class="row">
+                    <div class="form-group col-md-3">
+                        <label for="busca_data" class="control-label">Data</label>
+                        <input id="busca_data" type="date" min="2018-11-01" max="2222-12-31" class="form-control col-md-12 busca_validation_field" name="busca_data">
+                    </div>
+                    <div class="form-group col-md-5">
+                        <label for="busca_usuario" class="control-label">Usuário</label>
+                        <select name="busca_usuario" id="busca_usuario" class="form-control col-md-12 busca_validation_field">
+                            <option value="">---</option>
+                        </select>
+                    </div>
+                    <div class="form-group col-md-4">
+                        <label for="busca_guiche" class="control-label">Guichê</label>
+                        <select name="busca_guiche" id="busca_guiche" class="form-control col-md-12 busca_validation_field">
+                            <option value="">---</option>
+                        </select>
+                    </div>
+                </div>
+            </div>
+            <div class="card-footer">
+                <button id="btn_busca" type="button" class="btn btn-lg btn-primary btn-block" disabled="true">
+                    Buscar Fechamento de Caixa
+                </button>
+            </div>
+        </div>
+    </div>
+    <!-- fim busca //-->
+    <br>
+    <div class="card mb-2">
+        <div class="card-body proj-card-body">
+            <div class="row">
+                <div class="col-sm-12 col-md-6 col-lg-3">
+                    <h5 class="proj-card-title text-center">Total de Entrada</h5>
+                    <div class="input-group input-group-lg">
+                        <div class="input-group-prepend">
+                            <span class="input-group-text">R$</span>
+                        </div>
+                        <input type="number" step="0.01" id="valor_total_entrada" class="form-control input-lg" placeholder="0,00" aria-label="0,00" disabled="true">
+                    </div>
+                </div>
+                <div class="col-sm-12 col-md-6 col-lg-3">
+                    <h5 class="proj-card-title text-center">Total Register</h5>
+                    <div class="input-group input-group-lg">
+                        <div class="input-group-prepend">
+                            <span class="input-group-text">R$</span>
+                        </div>
+                        <input type="number" step="0.01" id="valor_total_register" class="form-control input-lg caixa_editable" placeholder="0,00" aria-label="0,00">
+                    </div>
+                </div>
+                <div class="col-sm-12 col-md-6 col-lg-3">
+                    <h5 class="proj-card-title text-center">Quebra de Caixa</h5>
+                    <div class="input-group input-group-lg">
+                        <div class="input-group-prepend">
+                            <span class="input-group-text">R$</span>
+                        </div>
+                        <input type="number" step="0.01" id="valor_quebra" class="form-control input-lg" placeholder="0,00" aria-label="0,00" disabled="true">
+                    </div>
+                </div>
+                <div class="col-sm-12 col-md-6 col-lg-3">
+                    <h5 class="proj-card-title text-center">Total Geral</h5>
+                    <div class="input-group input-group-lg">
+                        <div class="input-group-prepend">
+                            <span class="input-group-text">R$</span>
+                        </div>
+                        <input type="number" step="0.01" id="valor_total" class="form-control input-lg" placeholder="0,00" aria-label="0,00" disabled="true">
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!-- CAIXA //-->
+    <div id="caixa" class="card proj-card">
+        <div class="proj-card-header bg-info">
+            <a href="#collapseCaixa" data-toggle="collapse">
+                <h4 class="proj-card-header-text text-light">Caixa</h4>
+                <p class="proj-card-header-text text-light"> - Valores retidos no caixa</p>
+            </a>
+            <div class="float-right">
+                <h4 class="proj-card-header-text text-light">R$ </h4>
+                <h4 class="proj-card-header-text text-light" id="saldo_inicial">0,00</h4>
+                <h4 class="proj-card-header-text text-light"> / R$ </h4>
+                <h4 class="proj-card-header-text text-light total_parte" id="valor_dinheiro_caixa">0,00</h4>
+            </div>
+        </div>
+        <div id="collapseCaixa" class="collapse show">
+            <div class="card-body proj-card-body">
+                <div class="row">
+                    <div class="col-sm-12 col-md-6 col-lg-4">
+                        <table class="table table-striped table-bordered table-condensed table-hover">
+                            <thead>
+                                <tr>
+                                    <th class="py-1">Moeda</th>
+                                    <th class="py-1">Quantidade</th>
+                                    <th class="py-1">Valor</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <!-- moeda 1 centavo //-->
+                                <tr>
+                                <td class="py-2">R$ 0,01</td>
+                                <td class="px-1 py-1">
+                                    <div class="input-group input-group-sm">
+                                        <div class="input-group-prepend">
+                                            <span class="input-group-text">#</span>
+                                        </div>
+                                        <input type="number" min="0" step="1" data-multiplier="0.01" id="qtd_moeda_01cent" class="form-control caixa_editable qtd_moeda" placeholder="0" aria-label="0">
+                                    </div>
+                                </td>
+                                <td class="px-1 py-1">
+                                    <div class="input-group input-group-sm">
+                                        <div class="input-group-prepend">
+                                            <span class="input-group-text">R$</span>
+                                        </div>
+                                        <input type="number" min="0" id="val_qtd_moeda_01cent" class="form-control input-sm val_qtd_moeda" placeholder="0,00" aria-label="0,00" disabled="true">
+                                    </div>
+                                </td>
+                                </tr>
+                                <!-- fim moeda 1 centavo //-->
+                                <!-- moeda 5 centavo //-->
+                                <tr>
+                                <td class="py-2">R$ 0,05</td>
+                                <td class="px-1 py-1">
+                                    <div class="input-group input-group-sm">
+                                        <div class="input-group-prepend">
+                                            <span class="input-group-text">#</span>
+                                        </div>
+                                        <input type="number" min="0" step="1" data-multiplier="0.05" id="qtd_moeda_05cent" class="form-control caixa_editable qtd_moeda" placeholder="0" aria-label="0">
+                                    </div>
+                                </td>
+                                <td class="px-1 py-1">
+                                    <div class="input-group input-group-sm">
+                                        <div class="input-group-prepend">
+                                            <span class="input-group-text">R$</span>
+                                        </div>
+                                        <input type="number" min="0" id="val_qtd_moeda_05cent" class="form-control input-sm val_qtd_moeda" placeholder="0,00" aria-label="0,00" disabled="true">
+                                    </div>
+                                </td>
+                                </tr>
+                                <!-- fim moeda 5 centavo //-->
+                                <!-- moeda 10 centavo //-->
+                                <tr>
+                                <td class="py-2">R$ 0,10</td>
+                                <td class="px-1 py-1">
+                                    <div class="input-group input-group-sm">
+                                        <div class="input-group-prepend">
+                                            <span class="input-group-text">#</span>
+                                        </div>
+                                        <input type="number" min="0" step="1" data-multiplier="0.1" id="qtd_moeda_10cent" class="form-control caixa_editable qtd_moeda" placeholder="0" aria-label="0">
+                                    </div>
+                                </td>
+                                <td class="px-1 py-1">
+                                    <div class="input-group input-group-sm">
+                                        <div class="input-group-prepend">
+                                            <span class="input-group-text">R$</span>
+                                        </div>
+                                        <input type="number" min="0" id="val_qtd_moeda_10cent" class="form-control input-sm val_qtd_moeda" placeholder="0,00" aria-label="0,00" disabled="true">
+                                    </div>
+                                </td>
+                                </tr>
+                                <!-- fim moeda 10 centavo //-->
+                                <!-- moeda 25 centavo //-->
+                                <tr>
+                                <td class="py-2">R$ 0,25</td>
+                                <td class="px-1 py-1">
+                                    <div class="input-group input-group-sm">
+                                        <div class="input-group-prepend">
+                                            <span class="input-group-text">#</span>
+                                        </div>
+                                        <input type="number" min="0" step="1" data-multiplier="0.25" id="qtd_moeda_25cent" class="form-control caixa_editable qtd_moeda" placeholder="0" aria-label="0">
+                                    </div>
+                                </td>
+                                <td class="px-1 py-1">
+                                    <div class="input-group input-group-sm">
+                                        <div class="input-group-prepend">
+                                            <span class="input-group-text">R$</span>
+                                        </div>
+                                        <input type="number" min="0" id="val_qtd_moeda_25cent" class="form-control input-sm val_qtd_moeda" placeholder="0,00" aria-label="0,00" disabled="true">
+                                    </div>
+                                </td>
+                                </tr>
+                                <!-- fim moeda 25 centavo //-->
+                            </tbody>
+                        </table>
+                    </div>
+                    <div class="col-sm-12 col-md-6 col-lg-4">
+                        <table class="table table-striped table-bordered table-condensed table-hover">
+                            <thead>
+                                <tr>
+                                    <th class="py-1">Moeda</th>
+                                    <th class="py-1">Quantidade</th>
+                                    <th class="py-1">Valor</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <!-- moeda 50 centavo //-->
+                                <tr>
+                                <td class="py-2">R$ 0,50</td>
+                                <td class="px-1 py-1">
+                                    <div class="input-group input-group-sm">
+                                        <div class="input-group-prepend">
+                                            <span class="input-group-text">#</span>
+                                        </div>
+                                        <input type="number" min="0" step="1" data-multiplier="0.5" id="qtd_moeda_50cent" class="form-control caixa_editable qtd_moeda" placeholder="0" aria-label="0">
+                                    </div>
+                                </td>
+                                <td class="px-1 py-1">
+                                    <div class="input-group input-group-sm">
+                                        <div class="input-group-prepend">
+                                            <span class="input-group-text">R$</span>
+                                        </div>
+                                        <input type="number" min="0" id="val_qtd_moeda_50cent" class="form-control input-sm val_qtd_moeda" placeholder="0,00" aria-label="0,00" disabled="true">
+                                    </div>
+                                </td>
+                                </tr>
+                                <!-- fim moeda 50 centavo //-->
+                                <!-- moeda 1 real //-->
+                                <tr>
+                                <td class="py-2">R$ 1,00</td>
+                                <td class="px-1 py-1">
+                                    <div class="input-group input-group-sm">
+                                        <div class="input-group-prepend">
+                                            <span class="input-group-text">#</span>
+                                        </div>
+                                        <input type="number" min="0" step="1" data-multiplier="1" id="qtd_moeda_01real" class="form-control caixa_editable qtd_moeda" placeholder="0" aria-label="0">
+                                    </div>
+                                </td>
+                                <td class="px-1 py-1">
+                                    <div class="input-group input-group-sm">
+                                        <div class="input-group-prepend">
+                                            <span class="input-group-text">R$</span>
+                                        </div>
+                                        <input type="number" min="0" id="val_qtd_moeda_01real" class="form-control input-sm val_qtd_moeda" placeholder="0,00" aria-label="0,00" disabled="true">
+                                    </div>
+                                </td>
+                                </tr>
+                                <!-- fim moeda 1 real //-->
+                                <!-- moeda 02reais //-->
+                                <tr>
+                                <td class="py-2">R$ 2,00</td>
+                                <td class="px-1 py-1">
+                                    <div class="input-group input-group-sm">
+                                        <div class="input-group-prepend">
+                                            <span class="input-group-text">#</span>
+                                        </div>
+                                        <input type="number" min="0" step="1" data-multiplier="2" id="qtd_moeda_02reais" class="form-control caixa_editable qtd_moeda" placeholder="0" aria-label="0">
+                                    </div>
+                                </td>
+                                <td class="px-1 py-1">
+                                    <div class="input-group input-group-sm">
+                                        <div class="input-group-prepend">
+                                            <span class="input-group-text">R$</span>
+                                        </div>
+                                        <input type="number" min="0" id="val_qtd_moeda_02reais" class="form-control input-sm val_qtd_moeda" placeholder="0,00" aria-label="0,00" disabled="true">
+                                    </div>
+                                </td>
+                                </tr>
+                                <!-- fim moeda 02reais //-->
+                                <!-- moeda 5reais //-->
+                                <tr>
+                                <td class="py-2">R$ 5,00</td>
+                                <td class="px-1 py-1">
+                                    <div class="input-group input-group-sm">
+                                        <div class="input-group-prepend">
+                                            <span class="input-group-text">#</span>
+                                        </div>
+                                        <input type="number" min="0" step="1" data-multiplier="5" id="qtd_moeda_05reais" class="form-control caixa_editable qtd_moeda" placeholder="0" aria-label="0">
+                                    </div>
+                                </td>
+                                <td class="px-1 py-1">
+                                    <div class="input-group input-group-sm">
+                                        <div class="input-group-prepend">
+                                            <span class="input-group-text">R$</span>
+                                        </div>
+                                        <input type="number" min="0" id="val_qtd_moeda_05reais" class="form-control input-sm val_qtd_moeda" placeholder="0,00" aria-label="0,00" disabled="true">
+                                    </div>
+                                </td>
+                                </tr>
+                                <!-- fim moeda 5reais //-->
+                            </tbody>
+                        </table>
+                    </div>
+                    <div class="col-sm-12 col-md-6 col-lg-4">
+                        <table class="table table-striped table-bordered table-condensed table-hover">
+                            <thead>
+                                <tr>
+                                    <th class="py-1">Moeda</th>
+                                    <th class="py-1">Quantidade</th>
+                                    <th class="py-1">Valor</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <!-- moeda 10reais //-->
+                                <tr>
+                                <td class="py-2">R$ 10,0</td>
+                                <td class="px-1 py-1">
+                                    <div class="input-group input-group-sm">
+                                        <div class="input-group-prepend">
+                                            <span class="input-group-text">#</span>
+                                        </div>
+                                        <input type="number" min="0" step="1" data-multiplier="10" id="qtd_moeda_10reais" class="form-control caixa_editable qtd_moeda" placeholder="0" aria-label="0">
+                                    </div>
+                                </td>
+                                <td class="px-1 py-1">
+                                    <div class="input-group input-group-sm">
+                                        <div class="input-group-prepend">
+                                            <span class="input-group-text">R$</span>
+                                        </div>
+                                        <input type="number" min="0" id="val_qtd_moeda_10reais" class="form-control input-sm val_qtd_moeda" placeholder="0,00" aria-label="0,00" disabled="true">
+                                    </div>
+                                </td>
+                                </tr>
+                                <!-- fim moeda 10reais //-->
+                                <!-- moeda 20reais //-->
+                                <tr>
+                                <td class="py-2">R$ 20,0</td>
+                                <td class="px-1 py-1">
+                                    <div class="input-group input-group-sm">
+                                        <div class="input-group-prepend">
+                                            <span class="input-group-text">#</span>
+                                        </div>
+                                        <input type="number" min="0" step="1" data-multiplier="20" id="qtd_moeda_20reais" class="form-control caixa_editable qtd_moeda" placeholder="0" aria-label="0">
+                                    </div>
+                                </td>
+                                <td class="px-1 py-1">
+                                    <div class="input-group input-group-sm">
+                                        <div class="input-group-prepend">
+                                            <span class="input-group-text">R$</span>
+                                        </div>
+                                        <input type="number" min="0" id="val_qtd_moeda_20reais" class="form-control input-sm val_qtd_moeda" placeholder="0,00" aria-label="0,00" disabled="true">
+                                    </div>
+                                </td>
+                                </tr>
+                                <!-- fim moeda 20reais //-->
+                                <!-- moeda 50 reais //-->
+                                <tr>
+                                <td class="py-2">R$ 50,0</td>
+                                <td class="px-1 py-1">
+                                    <div class="input-group input-group-sm">
+                                        <div class="input-group-prepend">
+                                            <span class="input-group-text">#</span>
+                                        </div>
+                                        <input type="number" min="0" step="1" data-multiplier="50" id="qtd_moeda_50reais" class="form-control caixa_editable qtd_moeda" placeholder="0" aria-label="0">
+                                    </div>
+                                </td>
+                                <td class="px-1 py-1">
+                                    <div class="input-group input-group-sm">
+                                        <div class="input-group-prepend">
+                                            <span class="input-group-text">R$</span>
+                                        </div>
+                                        <input type="number" min="0" id="val_qtd_moeda_50reais" class="form-control input-sm val_qtd_moeda" placeholder="0,00" aria-label="0,00" disabled="true">
+                                    </div>
+                                </td>
+                                </tr>
+                                <!-- fim moeda 50 reais //-->
+                                <!-- moeda 100reais //-->
+                                <tr>
+                                <td class="py-2">R$ 100</td>
+                                <td class="px-1 py-1">
+                                    <div class="input-group input-group-sm">
+                                        <div class="input-group-prepend">
+                                            <span class="input-group-text">#</span>
+                                        </div>
+                                        <input type="number" min="0" step="1" data-multiplier="100" id="qtd_moeda_100reais" class="form-control caixa_editable qtd_moeda" placeholder="0" aria-label="0">
+                                    </div>
+                                </td>
+                                <td class="px-1 py-1">
+                                    <div class="input-group input-group-sm">
+                                        <div class="input-group-prepend">
+                                            <span class="input-group-text">R$</span>
+                                        </div>
+                                        <input type="number" min="0" id="val_qtd_moeda_100reais" class="form-control input-sm val_qtd_moeda" placeholder="0,00" aria-label="0,00" disabled="true">
+                                    </div>
+                                </td>
+                                </tr>
+                                <!-- fim moeda 100reais //-->
+
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+    </div>
+    <!-- fim CAIXA //-->
+    <!-- COFRE //-->
+    <div id="cofre" class="card proj-card">
+        <div class="proj-card-header bg-secondary">
+            <a href="#collapseCofre" data-toggle="collapse">
+                <h4 class="proj-card-header-text text-light">Cofre</h4>
+                <p class="proj-card-header-text text-light"> - Valores retirados do caixa e enviados ao cofre</p>
+            </a>
+            <div class="float-right">
+                <h4 class="proj-card-header-text text-light">R$ </h4>
+                <h4 class="proj-card-header-text text-light total_parte" id="valor_total_cofre">0,00</h4>
+            </div>
+        </div>
+        <div class="collapse show" id="collapseCofre">
+            <div class="proj-card-body">
+                <div class="card-group">
+                    <div class="card">
+                        <div class="proj-card-header text-center">
+                            Dinheiro
+                        </div>
+                        <div class="card-body proj-card-body">
+                            <p class="text-muted text-center">Valor total a enviar para o cofre</p>
+                            <div class="input-group">
+                                <div class="input-group-prepend">
+                                    <span class="input-group-text">R$</span>
+                                </div>
+                                <input type="number" step="0.5" id="valor_dinheiro_cofre" class="form-control caixa_editable val_cofre" placeholder="0,00" aria-label="0,00">
+                            </div>
+                        </div>
+                    </div>
+                    <div class="card" id="depositos_card">
+                        <div class="proj-card-header text-center">
+                            Depósitos
+                            <div id="depositos_card_counter" class="cards_counters"></div>
+                        </div>
+                        <div class="card-body proj-card-body">
+                            <p class="text-muted text-center">Busque e relacione depósitos</p>
+                            <div class="input-group">
+                                <div class="input-group-prepend">
+                                    <span class="input-group-text">R$</span>
+                                </div>
+                                <input type="number" step="0.5" id="valor_depositos" class="form-control mr-1 val_cofre" placeholder="0,00" aria-label="0,00" disabled="true">
+                                <button role="button" class="btn proj-btn-deadgreen caixa_editable" data-toggle="modal" data-target="#addDeposito" id="deposito_button_open_modal">
+                                    <img class="glyph-icon mb-1" src="{% static 'svg/si-glyph-plus.svg' %}" alt="">
+                                </button>
+                            </div>
+                        </div>
+                        <!-- Modal relacionar Depósitos -->
+                        <div class="modal fade" id="addDeposito" tabindex="-1" role="dialog" aria-labelledby="addDepositoLabel" aria-hidden="true">
+                            <div class="modal-dialog modal-lg" role="document">
+                                <div class="modal-content">
+                                    <div class="modal-header">
+                                        <h5 class="modal-title" id="addDepositoLabel">Relacionar Depósitos Bancários</h5>
+                                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                            <span aria-hidden="true">&times;</span>
+                                        </button>
+                                    </div>
+                                    <div class="modal-body">
+                                        <div class="row">
+                                            <div class="col-md-12 col-lg-8">
+                                                <div class="form-group">
+                                                    <label for="get_depositos" class="col-form-label requiredField">Busque e relacione depósitos bancários</label>
+                                                    <div class="input-group ui-widget" id="get_depositos_widget">
+                                                        <div class="input-group-prepend">
+                                                            <span class="input-group-text">
+                                                                <img class="glyph-icon mb-1" src="{% static 'svg/si-glyph-text-search.svg' %}" alt="">
+                                                            </span>
+                                                        </div>
+                                                        <input type="text" id="get_depositos" data-card-add="deposito" class="form-control input-group" autofocus="true">
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <div class="col-md-7 col-lg-4">
+                                                <div class="form-group">
+                                                    <label for="get_depositos" class="col-form-label requiredField">Valor a utilizar</label>
+                                                    <div class="input-group ui-widget" id="get_depositos_widget">
+                                                        <div class="input-group-prepend">
+                                                            <span class="input-group-text">
+                                                                R$
+                                                            </span>
+                                                        </div>
+                                                        <input type="number" min="1" id="deposito_valor_utilizado" data-card-add="deposito" class="form-control input-group cofre_modal_validation_field">
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+
+                                    </div>
+                                    <div class="modal-footer">
+                                        <button type="button" class="btn btn-secondary" data-dismiss="modal">Fechar</button>
+                                        <button type="button" class="btn btn-primary" id="deposito_button_add" disabled="true">Relacionar</button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <!-- Modal show Depósito -->
+                        <div class="modal fade" id="show_deposito" tabindex="-1" role="dialog" aria-labelledby="show_deposito_label" aria-hidden="true">
+                            <div class="modal-dialog modal-dialog-centered modal-lg" role="document">
+                                <div class="modal-content">
+                                    <div class="modal-header">
+                                        <h5 class="modal-title" id="show_deposito_label">Deposito</h5>
+                                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                            <span aria-hidden="true">&times;</span>
+                                        </button>
+                                    </div>
+                                    <div class="modal-body">
+                                        <div class="row">
+                                            <div class="col-md-6 col-lg-4">
+                                                <div class="form-group">
+                                                    <label class="col-form-label requiredField">Data</label>
+                                                    <div class="input-group ui-widget">
+                                                        <div class="input-group-prepend">
+                                                            <span class="input-group-text">
+                                                                <img class="glyph-icon mb-1" src="{% static 'svg/si-glyph-calendar-1.svg' %}" alt="">
+                                                            </span>
+                                                        </div>
+                                                        <input type="date" id="show_deposito_data_deposito" class="form-control input-group" disabled="true">
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <div class="w-100 d-none d-md-block d-lg-none d-xl-none"><!-- wrap every 2 on sm--></div>
+                                            <div class="col-md-6 col-lg-4">
+                                                <div class="form-group">
+                                                    <label class="col-form-label requiredField">Valor do Depósito</label>
+                                                    <div class="input-group ui-widget">
+                                                        <div class="input-group-prepend">
+                                                            <span class="input-group-text">
+                                                                R$
+                                                            </span>
+                                                        </div>
+                                                        <input type="number" id="show_deposito_valor_deposito" class="form-control input-group" disabled="true">
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <div class="col-md-6 col-lg-4">
+                                                <div class="form-group">
+                                                    <label class="col-form-label requiredField">Valor Utilizado</label>
+                                                    <div class="input-group ui-widget">
+                                                        <div class="input-group-prepend">
+                                                            <span class="input-group-text">
+                                                                R$
+                                                            </span>
+                                                        </div>
+                                                        <input type="number" id="show_deposito_valor_utilizado" class="form-control input-group" disabled="true">
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="row">
+                                            <div class="col-md-12 col-lg-6">
+                                                <div class="form-group">
+                                                    <label class="col-form-label requiredField">Identificação</label>
+                                                    <div class="input-group ui-widget">
+                                                        <div class="input-group-prepend">
+                                                            <span class="input-group-text">
+                                                                <img class="glyph-icon mb-1" src="{% static 'svg/si-glyph-person-2.svg' %}" alt="">
+                                                            </span>
+                                                        </div>
+                                                        <input type="text" id="show_deposito_identificacao" class="form-control input-group" disabled="true">
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <div class="col-md-12 col-lg-6">
+                                                <div class="form-group">
+                                                    <label class="col-form-label requiredField">Observações</label>
+                                                    <div class="input-group ui-widget">
+                                                        <div class="input-group-prepend">
+                                                            <span class="input-group-text">
+                                                                <img class="glyph-icon mb-1" src="{% static 'svg/si-glyph-bullet-list-2.svg' %}" alt="">
+                                                            </span>
+                                                        </div>
+                                                        <textarea class="form-control" id="show_deposito_observacoes" rows="1" disabled="true"></textarea>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="modal-footer">
+                                        <div id="deposito_opt_messages" class="w-100 text-align-left"></div>
+                                        <button type="button" class="btn btn-secondary" data-dismiss="modal">Fechar</button>
+                                        <button type="button" class="btn btn-danger caixa_editable" id="show_deposito_btn_del">Remover</button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="w-100 d-none d-sm-block d-md-block d-lg-none"><!-- wrap every 2 on sm--></div>
+                    <div class="card" id="cheques_card">
+                        <div class="proj-card-header text-center">
+                            Cheques
+                            <div id="cheques_card_counter" class="cards_counters"></div>
+                        </div>
+                        <div class="card-body proj-card-body">
+                            <p class="text-muted text-center">Adicione cheques</p>
+                            <div class="input-group">
+                                <div class="input-group-prepend">
+                                    <span class="input-group-text">R$</span>
+                                </div>
+                                <input type="number" step="0.5" id="valor_cheques" class="form-control mr-1 val_cofre" placeholder="0,00" aria-label="0,00" disabled="true">
+                                <button id="#btn_add_cheque" role="button" class="btn proj-btn-deadgreen caixa_editable" data-toggle="modal" data-target="#addCheque">
+                                    <img class="glyph-icon mb-1" src="{% static 'svg/si-glyph-plus.svg' %}" alt="">
+                                </button>
+                            </div>
+                        </div>
+                        <!-- Modal Add Cheques -->
+                        <div class="modal fade" id="addCheque" tabindex="-1" role="dialog" aria-labelledby="addChequeLabel" aria-hidden="true">
+                            <div class="modal-dialog modal-lg" role="document">
+                                <div class="modal-content">
+                                    <div class="modal-header">
+                                        <h5 class="modal-title" id="addChequeLabel">Adicionar Cheque</h5>
+                                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                            <span aria-hidden="true">&times;</span>
+                                        </button>
+                                    </div>
+                                    <div class="modal-body" id="addChequeModalBody">
+                                        <div class="row">
+                                            <div class="col-md-12 col-lg-6">
+                                                <div class="form-group form-group-sm">
+                                                    <label for="add_item_cheque_banco" class="col-form-label requiredField">Banco</label>
+                                                    <div class="input-group input-group-sm">
+                                                        <div class="input-group-prepend">
+                                                            <span class="input-group-text">
+                                                                <img class="glyph-icon mb-1" src="{% static 'svg/si-glyph-bank.svg' %}" alt="">
+                                                            </span>
+                                                        </div>
+                                                        <input type="text" id="add_item_cheque_banco" data-card-add="cheque" class="form-control input-group-sm cofre_modal_validation_field cheque_text_field">
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <div class="col-md-6 col-lg-3">
+                                                <div class="form-group form-group-sm">
+                                                    <label for="add_item_cheque_num" class="col-form-label requiredField">Número do Cheque</label>
+                                                    <div class="input-group input-group-sm">
+                                                        <div class="input-group-prepend">
+                                                            <span class="input-group-text">
+                                                                <img class="glyph-icon mb-1" src="{% static 'svg/si-glyph-barcode.svg' %}" alt="">
+                                                            </span>
+                                                        </div>
+                                                        <input type="text" id="add_item_cheque_num" data-card-add="cheque" class="form-control input-group-sm cofre_modal_validation_field cheque_text_field">
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <div class="col-md-6 col-lg-3">
+                                                <div class="form-group form-group-sm">
+                                                    <label for="add_item_cheque_valor" class="col-form-label  requiredField">Valor</label>
+                                                    <div class="input-group input-group-sm">
+                                                        <div class="input-group-prepend">
+                                                            <span class="input-group-text">R$</span>
+                                                        </div>
+                                                        <input type="number" min="0" id="add_item_cheque_valor" data-card-add="cheque" class="form-control input-sm cofre_modal_validation_field" placeholder="0,00" aria-label="0,00">
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="row">
+                                            <div class="col-md-12 col-lg-8">
+                                                <div class="form-group form-group-sm">
+                                                    <label for="add_item_cheque_emitente" class="col-form-label requiredField">Emitente</label>
+                                                    <div class="input-group input-group-sm">
+                                                        <div class="input-group-prepend">
+                                                            <span class="input-group-text">
+                                                                <img class="glyph-icon mb-1" src="{% static 'svg/si-glyph-person-2.svg' %}" alt="">
+                                                            </span>
+                                                        </div>
+                                                        <input type="text" id="add_item_cheque_emitente" data-card-add="cheque" class="form-control input-group-sm cofre_modal_validation_field cheque_text_field">
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <div class="col-md-5 col-lg-4">
+                                                <div class="form-group form-group-sm">
+                                                    <label for="add_item_cheque_data" class="col-form-label requiredField">Data do Cheque</label>
+                                                    <div class="input-group input-group-sm">
+                                                        <div class="input-group-prepend">
+                                                            <span class="input-group-text">
+                                                                <img class="glyph-icon mb-1" src="{% static 'svg/si-glyph-calendar-1.svg' %}" alt="">
+                                                            </span>
+                                                        </div>
+                                                        <input type="date" id="add_item_cheque_data" data-card-add="cheque" class="form-control input-group-sm cofre_modal_validation_field cheque_text_field">
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="modal-footer">
+                                        <button type="button" class="btn btn-secondary" data-dismiss="modal">Fechar</button>
+                                        <button type="button" id="cheque_button_add" class="btn btn-primary" disabled="true">Adicionar</button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div><!-- Modal show Cheque -->
+                        <div class="modal fade" id="show_cheque" tabindex="-1" role="dialog" aria-labelledby="show_cheque_label" aria-hidden="true">
+                            <div class="modal-dialog modal-lg" role="document">
+                                <div class="modal-content">
+                                    <div class="modal-header">
+                                        <h5 class="modal-title" id="show_cheque_label">Verificar Cheque</h5>
+                                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                            <span aria-hidden="true">&times;</span>
+                                        </button>
+                                    </div>
+                                    <div class="modal-body" id="show_cheque_modal_body">
+                                        <div class="row">
+                                            <div class="col-md-12 col-lg-6">
+                                                <div class="form-group form-group-sm">
+                                                    <label for="show_cheque_banco" class="col-form-label requiredField">Banco</label>
+                                                    <div class="input-group input-group-sm">
+                                                        <div class="input-group-prepend">
+                                                            <span class="input-group-text">
+                                                                <img class="glyph-icon mb-1" src="{% static 'svg/si-glyph-bank.svg' %}" alt="">
+                                                            </span>
+                                                        </div>
+                                                        <input type="text" id="show_cheque_banco" class="form-control input-group-sm" disabled="true">
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <div class="col-md-6 col-lg-3">
+                                                <div class="form-group form-group-sm">
+                                                    <label for="show_cheque_num" class="col-form-label requiredField">Número do Cheque</label>
+                                                    <div class="input-group input-group-sm">
+                                                        <div class="input-group-prepend">
+                                                            <span class="input-group-text">
+                                                                <img class="glyph-icon mb-1" src="{% static 'svg/si-glyph-barcode.svg' %}" alt="">
+                                                            </span>
+                                                        </div>
+                                                        <input type="text" id="show_cheque_numero" class="form-control input-group-sm" disabled="true">
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <div class="col-md-6 col-lg-3">
+                                                <div class="form-group form-group-sm">
+                                                    <label for="show_cheque_valor" class="col-form-label  requiredField">Valor</label>
+                                                    <div class="input-group input-group-sm">
+                                                        <div class="input-group-prepend">
+                                                            <span class="input-group-text">R$</span>
+                                                        </div>
+                                                        <input type="number" id="show_cheque_valor" class="form-control input-sm" disabled="true">
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="row">
+                                            <div class="col-md-12 col-lg-8">
+                                                <div class="form-group form-group-sm">
+                                                    <label for="show_cheque_emitente" class="col-form-label requiredField">Emitente</label>
+                                                    <div class="input-group input-group-sm">
+                                                        <div class="input-group-prepend">
+                                                            <span class="input-group-text">
+                                                                <img class="glyph-icon mb-1" src="{% static 'svg/si-glyph-person-2.svg' %}" alt="">
+                                                            </span>
+                                                        </div>
+                                                        <input type="text" id="show_cheque_emitente" class="form-control input-group-sm" disabled="true">
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <div class="col-md-5 col-lg-4">
+                                                <div class="form-group form-group-sm">
+                                                    <label for="show_cheque_data" class="col-form-label requiredField">Data do Cheque</label>
+                                                    <div class="input-group input-group-sm">
+                                                        <div class="input-group-prepend">
+                                                            <span class="input-group-text">
+                                                                <img class="glyph-icon mb-1" src="{% static 'svg/si-glyph-calendar-1.svg' %}" alt="">
+                                                            </span>
+                                                        </div>
+                                                        <input type="date" id="show_cheque_data" class="form-control input-group-sm" disabled="true">
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="modal-footer">
+                                        <button type="button" class="btn btn-secondary" data-dismiss="modal">Fechar</button>
+                                        <button type="button" id="show_cheque_btn_del" class="btn btn-danger caixa_editable">Remover</button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="card" id="comprovantes_card">
+                        <div class="proj-card-header text-center">
+                            Comprovantes de Pagamento
+                            <div id="comprovantes_card_counter" class="cards_counters"></div>
+                        </div>
+                        <div class="card-body proj-card-body">
+                            <p class="text-muted text-center">Adicione comprovantes</p>
+                            <div class="input-group">
+                                <div class="input-group-prepend">
+                                    <span class="input-group-text">R$</span>
+                                </div>
+                                <input type="number" step="0.5" id="valor_comprovantes" class="form-control mr-1 val_cofre" placeholder="0,00" aria-label="0,00" disabled="true">
+                                <button role="button" class="btn proj-btn-deadgreen caixa_editable" data-toggle="modal" data-target="#addComprovante">
+                                    <img class="glyph-icon mb-1" src="{% static 'svg/si-glyph-plus.svg' %}" alt="">
+                                </button>
+                            </div>
+                        </div>
+                        <div class="proj-card-footer" id="comprovantes_list">
+                            <a href="#show_cartoes" class="proj-card-block-link" noremove data-toggle="modal" data-target="#show_cartoes">
+                                <div class="card d-flex flex-row">
+                                    <span class="px-0" style="width: .95rem;">R$ </span>
+                                    <span class="col-3 px-1 proj-car-item-list-wrap val_comprovante" id="valor_cartoes">0.00</span>
+                                    <span class="col-9 px-1 proj-car-item-list-wrap">Total pago em cartão</span>
+                                </div>
+                            </a>
+                        </div>
+                        <!-- Modal Add Comprovantes -->
+                        <div class="modal fade" id="addComprovante" tabindex="-1" role="dialog" aria-labelledby="addComprovanteLabel" aria-hidden="true">
+                            <div class="modal-dialog" role="document">
+                                <div class="modal-content">
+                                    <div class="modal-header">
+                                        <h5 class="modal-title" id="addComprovanteLabel">Adicionar Comprovante de Pagamento</h5>
+                                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                            <span aria-hidden="true">&times;</span>
+                                        </button>
+                                    </div>
+                                    <div class="modal-body" id="addComprovanteModalBody">
+                                        <div class="row">
+                                            <div class="col-md-8">
+                                                <div class="form-group form-group-sm">
+                                                    <label for="add_item_comprovante_ident" class="col-form-label requiredField">Identificação</label>
+                                                    <div class="input-group input-group-sm">
+                                                        <input type="text" id="add_item_comprovante_ident" data-card-add="comprovante" class="form-control input-group-sm cofre_modal_validation_field">
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <div class="col-md-4">
+                                                <div class="form-group form-group-sm">
+                                                    <label for="add_item_comprovante_valor" class="col-form-label  requiredField">Valor</label>
+                                                    <div class="input-group input-group-sm">
+                                                        <div class="input-group-prepend">
+                                                            <span class="input-group-text">R$</span>
+                                                        </div>
+                                                        <input type="number" min="0" id="add_item_comprovante_valor" data-card-add="comprovante" class="form-control input-sm cofre_modal_validation_field" placeholder="0,00" aria-label="0,00">
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="modal-footer">
+                                        <button type="button" class="btn btn-secondary" data-dismiss="modal">Fechar</button>
+                                        <button type="button" id="comprovante_button_add" class="btn btn-primary" disabled="true">Adicionar</button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <!-- Modal show Comprovante -->
+                        <div class="modal fade" id="show_comprovante" tabindex="-1" role="dialog" aria-labelledby="show_comprovante_label" aria-hidden="true">
+                            <div class="modal-dialog" role="document">
+                                <div class="modal-content">
+                                    <div class="modal-header">
+                                        <h5 class="modal-title" id="show_comprovante_label">Verificar Comprovante de Pagamento</h5>
+                                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                            <span aria-hidden="true">&times;</span>
+                                        </button>
+                                    </div>
+                                    <div class="modal-body" id="show_comprovante_modal_body">
+                                        <div class="row">
+                                            <div class="col-md-8">
+                                                <div class="form-group form-group-sm">
+                                                    <label for="show_comprovante_ident" class="col-form-label requiredField">Identificação</label>
+                                                    <div class="input-group input-group-sm">
+                                                        <input type="text" id="show_comprovante_ident"class="form-control input-group-sm" disabled="true">
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <div class="col-md-4">
+                                                <div class="form-group form-group-sm">
+                                                    <label for="show_comprovante_valor" class="col-form-label  requiredField">Valor</label>
+                                                    <div class="input-group input-group-sm">
+                                                        <div class="input-group-prepend">
+                                                            <span class="input-group-text">R$</span>
+                                                        </div>
+                                                        <input type="number" id="show_comprovante_valor" class="form-control input-sm" disabled="true">
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="modal-footer">
+                                        <button type="button" class="btn btn-secondary" data-dismiss="modal">Fechar</button>
+                                        <button type="button" id="show_comprovante_btn_del" class="btn btn-danger caixa_editable">Remover</button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <!-- Modal show Cartoes -->
+                        <div class="modal fade" id="show_cartoes" tabindex="-1" role="dialog" aria-labelledby="show_cartoes_label" aria-hidden="true">
+                            <div class="modal-dialog modal-lg" role="document">
+                                <div class="modal-content">
+                                    <div class="modal-header">
+                                        <h5 class="modal-title" id="show_cartoes_label">Pagamentos em Cartões</h5>
+                                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                            <span aria-hidden="true">&times;</span>
+                                        </button>
+                                    </div>
+                                    <div class="modal-body" id="show_cartoes_modal_body">
+                                        <section class="collapse show" id="collapseRegistros"></section>
+                                    </div>
+                                    <div class="modal-footer">
+                                        <div style="display: none;">
+                                            <div class="col-12 text-center">
+                                                <a class="btn btn-sm btn-outline-light" data-toggle="collapse" href="#collapseRegistros" role="button" aria-expanded="false" aria-controls="collapseExample">
+                                                    Registros
+                                                </a>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+        
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!-- fim COFRE //-->
+    <!-- SERVIÇOS AOS CLIENTES //-->
+    <div id="serv_clientes" class="card proj-card">
+        <div class="proj-card-header" style="background-color: #527a7a;">
+            <a href="#collapseServicos" data-toggle="collapse">
+                <h4 class="proj-card-header-text text-light">Serviços aos Clientes</h4>
+                <p class="proj-card-header-text text-light"> - Serviços prestados a clientes cadastrados</p>
+            </a>
+            <div class="float-right">
+                <h4 class="proj-card-header-text text-light">R$ </h4>
+                <h4 class="proj-card-header-text text-light total_parte" id="valor_serv_cliente">0,00</h4>
+                <h4 class="proj-card-header-text text-light"> / R$ -</h4><h4 
+                    class="proj-card-header-text text-light total_parte" id="valor_desp_futuras_indicador">0,00</h4>
+            </div>
+        </div>
+        <div id="collapseServicos" class="collapse show">
+            <div class="proj-card-body">
+                <div class="row">
+                    <div class="col-md-8 pr-1">
+                        <div class="card" id="serv_cliente_card">
+                            <div class="proj-card-header text-center">
+                                Serviços prestados por pagamento prévio ou posterior
+                                <div id="serv_cliente_card_counter" class="cards_counters"></div>
+                            </div>
+                            <div class="card-body proj-card-body bg-light" >
+                                <div class="proj-simple-row" id="serv_cliente_divs">
+                                    <div class="col-md-6 pl-0 pr-1">
+                                        <div class="input-group input-group-sm">
+                                            <div class="input-group-prepend">
+                                                <span class="input-group-text">
+                                                    <img class="glyph-icon mb-1" src="{% static 'svg/si-glyph-person-2.svg' %}" alt="">
+                                                </span>
+                                            </div>
+                                            <input class="form-control cofre_modal_validation_field caixa_editable" data-card-add="serv_cliente"  type="text" id="get_cliente" placeholder="Cliente">
+                                        </div>
+
+                                        <div class="proj-simple-row">
+                                            <div class="col-md-6 px-0">
+                                                <div class="input-group input-group-sm">
+                                                    <div class="input-group-prepend">
+                                                        <select id="serv_cliente_tipo_protocolo" class="input-group-text proj-select-no-caret caixa_editable">
+                                                            <option value="CE">CE</option>
+                                                            <option value="RE">RE</option>
+                                                            <option value="EX">EX</option>
+                                                        </select>
+                                                    </div>
+                                                    <input class="form-control cofre_modal_validation_field caixa_editable" data-card-add="serv_cliente" type="number" min="10000" max="999999" id="serv_cliente_protocolo" placeholder="Protocolo">
+                                                </div>
+                                            </div>
+                                            <div class="col-md-6 px-0">
+                                                <div class="input-group input-group-sm">
+                                                    <div class="input-group-prepend">
+                                                        <span class="input-group-text">R$</span>
+                                                    </div>
+                                                    <input class="form-control cofre_modal_validation_field caixa_editable" data-card-add="serv_cliente" type="number" min="10" id="serv_cliente_valor" placeholder="Valor">
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <button class="btn btn-sm btn-block proj-btn-deadgreen mt-1" id="serv_cliente_button_add" disabled="true">Adicionar</button>
+                                    </div>
+                                    <div class="col-md-6 px-0 proj-card-div " id="serv_clientes_list">
+
+                                    </div>
+                                </div>
+
+                            </div>
+                            <!-- Modal show Serviços aos Clientes -->
+                            <div class="modal fade" id="show_serv_cliente" tabindex="-1" role="dialog" aria-labelledby="show_serv_cliente_label" aria-hidden="true">
+                                <div class="modal-dialog" role="document">
+                                    <div class="modal-content">
+                                        <div class="modal-header">
+                                            <h5 class="modal-title" id="show_serv_cliente_label">Verificar Pagamento Posterior</h5>
+                                            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                                <span aria-hidden="true">&times;</span>
+                                            </button>
+                                        </div>
+                                        <div class="modal-body" id="show_serv_cliente_modal_body">
+                                            <div class="row">
+                                                <div class="col-md-12">
+                                                    <div class="form-group form-group-sm">
+                                                        <label for="show_serv_cliente_protocolo" class="col-form-label requiredField">Cliente</label>
+                                                        <div class="input-group input-group-sm">
+                                                            <div class="input-group-prepend">
+                                                                <span class="input-group-text">
+                                                                    <img class="glyph-icon mb-1" src="{% static 'svg/si-glyph-person-2.svg' %}" alt="">
+                                                                </span>
+                                                            </div>
+                                                            <input type="text" id="show_serv_cliente_cliente_nome"class="form-control input-group-sm" disabled="true">
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <div class="row">
+                                                <div class="col-md-8">
+                                                    <div class="form-group form-group-sm">
+                                                        <label for="show_serv_cliente_protocolo" class="col-form-label requiredField">Protocolo</label>
+                                                        <div class="input-group input-group-sm">
+                                                            <div class="input-group-prepend">
+                                                                <span class="input-group-text" id="show_serv_cliente_tipo_protocolo">??</span>
+                                                            </div>
+                                                            <input type="number" id="show_serv_cliente_protocolo" class="form-control input-group-sm" disabled="true">
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                                <div class="col-md-4">
+                                                    <div class="form-group form-group-sm">
+                                                        <label for="show_serv_cliente_valor" class="col-form-label  requiredField">Valor</label>
+                                                        <div class="input-group input-group-sm">
+                                                            <div class="input-group-prepend">
+                                                                <span class="input-group-text">R$</span>
+                                                            </div>
+                                                            <input type="number" id="show_serv_cliente_valor" class="form-control input-sm" disabled="true">
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <div class="row">
+                                                <div class="col-md-12">
+                                                    <div class="form-group form-group-sm">
+                                                        <label for="show_serv_cliente_observacoes" class="col-form-label requiredField">Observações</label>
+                                                        <div class="input-group input-group-sm">
+                                                            <div class="input-group-prepend">
+                                                                <span class="input-group-text">
+                                                                    Aa
+                                                                </span>
+                                                            </div>
+                                                            <textarea id="show_serv_cliente_cliente_observacoes" class="form-control" cols="30" rows="2" disabled></textarea>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="modal-footer">
+                                            <button type="button" class="btn btn-secondary" data-dismiss="modal">Fechar</button>
+                                            <button type="button" id="show_serv_cliente_btn_del" class="btn btn-danger caixa_editable">Remover</button>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <!-- fim Modal show Pagamento Posterior //-->
+                        </div>
+                    </div>
+                    <div class="col-md-4 pl-1">
+                        <div class="card" id="despesa_futura_card">
+                            <div class="proj-card-header text-center">
+                                Despesas Futuras
+                            </div>
+                            <div class="card-body proj-card-body">
+                                <p class="text-muted text-center proj-font-small mb-1">Despesas futuras custeadas pelo cliente.</p>
+                                <p class="text-muted text-center proj-font-small">Ex.: Custeio de fretes ou correios.</p>
+                                <div class="input-group input-group-sm">
+                                    <div class="input-group-prepend">
+                                        <span class="input-group-text">R$</span>
+                                    </div>
+                                    <input class="form-control caixa_editable" type="number" id="valor_desp_futuras" placeholder="Valor total">
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!-- fim VALORES FUTUROS //-->
+    <div class="clearfix">
+        <div class="row my-1 mw-50 float-left">
+            <div class="col-md-3">
+                <div class="form-group">
+                    <label for="qtd_devolucoes" class="text-muted my-0">Devoluções</label>
+                    <div class="input-group">
+                        <div class="input-group-prepend">
+                            <span class="input-group-text">#</span>
+                        </div>
+                        <input type="number" min="0" id="qtd_devolucoes" class="form-control caixa_editable">
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-9">
+                <div class="form-group">
+                    <label for="observacoes" class="text-muted my-0">Observações</label>
+                    <div class="input-group">
+                        <div class="input-group-prepend">
+                            <span class="input-group-text">Aa</span>
+                        </div>
+                        <textarea name="observacoes" id="observacoes" cols="30" rows="1" class="form-control caixa_editable">
+
+                        </textarea>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="justify-content-end d-flex my-4 mw-50 float-right" id="btns_fcaixa">
+            {% if user|has_role:'oficial,contador' %}
+            <button class="btn btn-lg btn-secondary mr-3" id="btn_consolidar_fcaixa" style="display: none;" disabled="true">
+                <span>Consolidar Caixa</span>
+                <img class="glyph-icon glyph-icon-light mb-1" src="{% static 'svg/si-glyph-white-pencil.svg' %}" alt="">
+            </button>
+            {% endif %}
+            <button class="btn btn-lg btn-secondary mr-3" id="btn_abrir_fcaixa" style="display: none;">
+                <span>Abrir Caixa</span>
+                <img class="glyph-icon glyph-icon-light mb-1" src="{% static 'svg/si-glyph-white-pencil.svg' %}" alt="">
+            </button>
+            <div class="btn-group btn-group-lg" role="group">
+                <div class="btn-group btn-group-lg pr-0 mr-0"  role="group" data-toggle="buttons" id="btn_fechar_fcaixa" style="display: none;">
+                    <button class="btn btn-outline-primary pr-1 noshadow">
+                        <input type="checkbox" id="checkbox_fechar_fcaixa" style="display: none;" autocomplete="off">
+                        <span>Fechar e</span>
+                    </button>
+                </div>
+                <button type="button" class="btn btn-primary pl-1 noshadow border_curve" id="btn_salvar_fcaixa" autocomplete="off" disabled="true">
+                    <span>Salvar Caixa &#x2713; </span>
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <div class="text-right w-100 mt-5 pt-5" id="notas_rodape">
+        <div id="notas_rodape_messages"></div>
+        <a data-toggle="collapse" href="#show_historico" aria-expanded="false" aria-controls="show_historico">
+            <small class="text-muted">Ver histórico do fechamento de caixa.</small>
+        </a>
+        <div class="collapse" id="show_historico">
+        </div>
+        <br>
+        <small class="text-muted ">Pressione F5 para atualizar a página quando achar que houve algum problema.</small>
+    </div>
+{% endblock content %}
+
+{% block css %}
+<link rel="stylesheet" href="{% static 'css/jquery-ui.min.css' %}" type="text/css">
+{% endblock css %}
+
+{% block javascript %}
+<script type="text/javascript" src="{% static 'js/jquery-ui.min.js' %}"></script>
+<script type="text/javascript" src="{% static 'js/js-joda.min.js' %}"></script>
+<script src="{% static 'js/toBR.js' %}"></script>
+<script src="{% static 'js/cartoes_registros.js' %}"></script>
+<script type="text/javascript">
+    var dep_cache = {};
+    var cliente_cache = {};
+    var client_tz = Intl.DateTimeFormat().resolvedOptions().timeZone;
+
+    function getFechamentoCaixa(data=null, guiche_id=null, usuario_id=null, fcaixa_id=null) {
+        $.ajax({
+            url: '{% url "gf_caixa" %}',
+            timeout: 2500,
+            data: {
+                'data': data,
+                'guiche_id': guiche_id,
+                'usuario_id': usuario_id,
+                'fcaixa_id': fcaixa_id,
+                'client_tz': client_tz,
+            },
+            dataType: 'json',
+            success: getFechamentoCaixaResult
+        }).fail(function(jqXHR, textStatus){
+            alert('Houve algum problema ao recuperar as informações:\n ' + textStatus)
+        });
+
+    };
+    function setFechamentoCaixa() {
+        $.ajax({
+            url: '{% url "sf_caixa" %}',
+            timeout: 2500,
+            data: setFechamentoCaixaResult(),
+            headers: {'X-CSRFToken':'{{ csrf_token }}'},
+            dataType: 'json',
+            contentType: "application/json; charset=utf-8",
+            type: 'post',
+            success: setFCaixaResponse,
+        }).fail(function(jqXHR, textStatus){
+            var data = {}
+            data['success'] = 0
+            setFCaixaResponse(data)
+            alert('Houve algum problema ao recuperar as informações:\n ' + textStatus)
+        });
+    };
+    function setActionsCaixa(action=null) {
+        $.ajax({
+            url: '{% url "sf_caixa" %}',
+            timeout: 2500,
+            data: setActionsCaixaResult(action),
+            headers: {'X-CSRFToken':'{{ csrf_token }}'},
+            dataType: 'json',
+            contentType: "application/json; charset=utf-8",
+            type: 'post',
+            success: setActionsCaixaResponse,
+        }).fail(function(jqXHR, textStatus){
+            var data = {}
+            data['success'] = 0
+            setActionsCaixaResponse(data)
+            alert('Houve algum problema ao recuperar as informações:\n ' + textStatus)
+        });
+    };
+
+    $(function(){
+        var params = (new URL(document.location)).searchParams;
+        if ( params.has('fcaixa_id') ){
+            getFechamentoCaixa(null, null, null, params.get('fcaixa_id'));
+        } else {
+            getFechamentoCaixa();
+        }
+
+        /* busca de depósitos com autocomplete */
+        $( "#get_depositos" ).autocomplete({
+            appendTo: "#get_depositos_widget",
+            minLength: 3,
+            delay: 200,
+            source: function( request, response ) {
+                var term = request.term;
+                if ( term in dep_cache ) {
+                    response( get_depositos_filter(dep_cache[term]) );
+                    return;
+                }
+
+                $.getJSON( "{% url 'g_depositos' %}", request, function( data, status, xhr ) {
+                    dep_cache[ term ] = data;
+                    response( get_depositos_filter(data) );
+                });
+            },
+            select: save_selected_deposito,
+        });
+
+        /* busca de clientes ( para pagamento posterior ) com autocomplete */
+        $( "#get_cliente" ).autocomplete({
+            minLength: 3,
+            delay: 200,
+            source: function( request, response ) {
+                var term = request.term;
+                if ( term in cliente_cache ) {
+                    response( cliente_cache[term] );
+                    return;
+                }
+
+                $.getJSON( "{% url 'g_clientes' %}", request, function( data, status, xhr ) {
+                    cliente_cache[ term ] = data;
+                    response( data );
+                });
+            },
+            select: save_selected_cliente_id,
+        });
+    });
+
+</script>
+<script type="text/javascript" src="{% static 'js/fechamento_caixa.js' %}"></script>
+{% endblock javascript %}

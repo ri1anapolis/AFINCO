@@ -1,0 +1,171 @@
+{% extends "base.html" %}
+{% load static %}
+{% load project_tags %}
+{% load permission_tags %}
+{% load mathfilters %}
+
+{% block title %}::: AFINCO ::: Depósitos - Detalhes{% endblock title %}
+
+{% block content %}
+    <h3>Depósitos</h3>
+    <span class="text-muted">Detalhes do depósito bancário: <b>{{ depositos.identificacao }} ( R$ {{ depositos.valor }} )</b></span>
+    <br /><br />
+    <div class="row">
+        <div class="col-md-4 col-lg-3">
+            <div class="form-group">
+                <label class="col-form-label">Data</label>
+                <div class="">
+                    <input type="text" name="data_deposito" class="customdateinput form-control" disabled="true" value="{{ depositos.data_deposito|date:'d/m/Y' }}">
+                    <small class="form-text text-muted">Data do depósito.</small>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-5 col-lg-3">
+            <div id="div_id_valor" class="form-group">
+                <label for="id_valor" class="col-form-label  requiredField">Valor</label>
+                <div class="">
+                    <input type="text" name="valor" step="any" class="numberinput form-control" disabled="true" value="{{ depositos.valor|floatformat:2|intseparator }}">
+                    <small id="hint_id_valor" class="form-text text-muted">Valor do depósito (em R$).</small>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-md-9 col-lg-8">
+            <div id="div_id_identificacao" class="form-group">
+                <label for="id_identificacao" class="col-form-label ">Identificação</label>
+                <div class="">
+                    <input type="text" name="identificacao" maxlength="200" class="textinput textInput form-control" disabled="true" value="{{ depositos.identificacao }}">
+                    <small id="hint_id_identificacao" class="form-text text-muted">Identificação do depósito.</small>
+                </div>
+            </div>
+            <div id="div_id_observacoes" class="form-group">
+                <label for="id_observacoes" class="col-form-label ">Observações</label>
+                <div class="">
+                    <textarea name="observacoes" cols="40" rows="3" maxlength="600" class="textarea form-control" disabled="true">{{ depositos.observacoes }}</textarea>
+                    <small id="hint_id_observacoes" class="form-text text-muted">Anotações acerca do depósito.</small>
+                </div>
+            </div>
+
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-md-9 col-lg-8">
+            <div class="form-group">
+                <div id="div_id_consolidado" class="form-check">
+                    <label for="id_consolidado" class="form-check-label">
+                        <input type="checkbox" name="consolidado" class="checkboxinput form-check-input" disabled="true" {% if depositos.consolidado %}checked="true" {% endif %} id="id_consolidado">
+                        Consolidado
+                    </label>
+                    <small class="form-text text-muted">Define se o depósito pode ou não ser utilizado</small>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    {% if fcaixa_list|length > 0 or clientes_pagamentos_list|length > 0 %}
+    <div class="row">
+        <div class="col-sm-12 col-md-10 col-lg-8">
+            <small class="text-danger text-justify">
+                Devido ao depósito ter sido relacionado a um fechamento de caixa ou pagamento, sua edição está parcialmente bloqueada
+                para garantir a integridade das informações. Ainda é possível alterar os campos "Observações" e "Consolidado"!
+            </small>
+        </div>
+    </div>
+    <br>
+    {% endif %}
+
+    <div class="row">
+        <div class="col-md-9 col-lg-8">
+           <span class="text-muted float-right">
+                <a href="{% url 'deposito_list' %}" class="btn btn-outline-secondary" id="btn_voltar_para_lista" rule="button">Ver Lista</a>
+            {% if user|has_role:'oficial,contador' %}
+                <a href="{% url 'deposito_edit' depositos.pk %}" class="btn btn-outline-primary" rule="button">Editar</a>
+            {% endif %}
+            {% if request.user.is_superuser or user|has_role:'oficial' %}
+                {% if fcaixa_list|length > 0 %}
+                    <button class="btn btn-light disabled">Apagar</button>
+                {% else %}
+                    <a href="{% url 'deposito_delete' depositos.pk %}" class="btn btn-outline-danger" rule="button">Apagar</a>
+                {% endif %}
+            {% endif %}
+            </span>
+        </div>
+    </div>
+    {% if fcaixa_list|length > 0 or clientes_pagamentos_list|length > 0 %}
+    <hr>
+    <div class="row">
+        <div class="col-md-8">
+            <div class="form-group">
+                <p class="form-text">
+                    Utilização <small>(R$ {{ depositos.valor_utilizado|floatformat:2|intseparator }})</small>:
+                </p>
+                <div class="list-group">
+
+                {% for fcaixa in fcaixa_list %}
+                    {% if user|has_role:'oficial,contador,supervisor_atendimento' %}
+                    <a href="{% url 'f_caixa' %}?fcaixa_id={{ fcaixa.fechamento_caixa.id }}" target="_blank" class="list-group-item list-group-item-action">
+                    {% else %}
+                    <a href="#" class="list-group-item list-group-item-action" disabled="true" onclick="return false;">
+                    {% endif %}
+                        {{ fcaixa }}
+                        <span class="badge badge-secondary float-right mt-1">Caixa</span>
+                    </a>
+                {% endfor %}
+
+                {% for pagamento in clientes_pagamentos_list %}
+                    {% if user|has_role:'oficial,contador,supervisor_atendimento' %}
+                    <a href="{% url 'cliente_pagamentos_detail' pagamento.pk %}" class="list-group-item list-group-item-action">
+                    {% else %}
+                    <a href="#" class="list-group-item list-group-item-action" disabled="true" onclick="return false;">
+                    {% endif %}
+                        Utilizado R$ {{ pagamento.valor }} em: 
+                        {{ pagamento }}
+                        <span class="badge badge-secondary float-right mt-1">Pagamentos</span>
+                    </a>
+                {% endfor %}
+
+                </div>
+            </div>
+            {% if depositos.valor|sub:depositos.valor_utilizado > 0  %}
+            <span class="text-muted small">Valor disponível para utilização: R$ {{ depositos.valor|sub:depositos.valor_utilizado|floatformat:2|intseparator }}</span>
+            {% endif %}
+        </div>
+    </div>
+    {% endif %}
+    <hr>
+    <div class="row">
+        <div class="col-md-4">
+            <div class="form-group">
+                <label class="col-form-label">Criado em:</label>
+                <div class="">
+                    <input type="text" name="data_deposito" class="customdateinput form-control" disabled="true" value="{{ depositos.data_add_reg|date:'d/m/Y' }}">
+                    <small class="form-text text-muted">Data do cadastro do depósito.</small>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-4">
+            <div class="form-group">
+                <label class="col-form-label">Modificado em:</label>
+                <div class="">
+                    <input type="text" name="data_deposito" class="customdateinput form-control" disabled="true" value="{{ depositos.data_mod_reg|date:'d/m/Y' }}">
+                    <small class="form-text text-muted">Data da modificação do depósito.</small>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="row">
+        <div class="form-group col-md-8">
+            <label lass="col-form-label ">Usuário</label>
+            <div class="">
+                <input type="text" name="identificacao" maxlength="200" class="textinput textInput form-control" disabled="true" value="{{ depositos.usuario }}">
+                <small class="form-text text-muted">Último usuário a alterar o registro.</small>
+            </div>
+        </div>
+    </div>
+
+{% endblock content %}
+
+{% block javascript %}
+    <script src="{% static 'js/voltar_para_lista.js' %}"></script>
+{% endblock javascript %}

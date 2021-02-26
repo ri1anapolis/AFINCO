@@ -1,0 +1,171 @@
+{% extends 'base.html' %}
+{% load static %}
+{% load project_tags %}
+{% load permission_tags %}
+
+{% block title %}::: AFINCO ::: Serviços - Detalhes{% endblock title%}
+
+{% block content %}
+
+    <h3>Serviços aos Clientes</h3>
+    <span class="text-muted">Detalhes do serviço: {{ clienteservicos }}</span>
+    <br><br>
+
+    <div class="form-row">
+        <div class="col-sm-12 col-md-10 col-lg-8">
+            <div class="form-group">
+                <label for="id_cliente" class="col-form-label">Cliente</label>
+                <select id='id_cliente' class="form-control" disabled="true">
+                    <option value="{{ clienteservicos.cliente.id }}" selected="true">{{ clienteservicos.cliente.nome }}</option>
+                </select>
+                <small class="form-text text-muted">Cliente ao qual foi prestado o serviço.</small>
+            </div>
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="col-sm-6 col-md-4 col-lg-3">
+            <div class="form-group">
+                <label for="id_data" class="col-form-label">Data</label>
+                <input type="text" id="id_data" class="form-control" value="{{ clienteservicos.data|date:'d/m/Y' }}" disabled="true">
+                <small class="form-text text-muted">Data em que foi prestado o serviço.</small>
+            </div>
+        </div>
+        <div class="col-sm-6 col-md-4 col-lg-3">
+            <div class="form-group">
+                <label for="id_valor" class="col-form-label">Valor</label>
+                <input type="text" id="id_valor" class="form-control" value="{{ clienteservicos.valor|floatformat:2|intseparator }}" disabled="true">
+                <small class="form-text text-muted">Valor do serviço prestado.</small>
+            </div>
+        </div>
+    </div>
+
+    <div class="form-row">
+        <div class="col-sm-4 col-md-3 col-lg-2">
+            <div class="form-group">
+                <label for="id_tipo_protocolo" class="col-form-label">Tipo de protocolo</label>
+                <select id='id_tipo_protocolo' class="form-control" disabled="true">
+                    <option value="{{ clienteservicos.tipo_protocolo }}" selected="true">{{ clienteservicos.get_tipo_protocolo_display }}</option>
+                </select>
+                <small class="form-text text-muted">Tipo do protocolo do register.</small>
+            </div>
+        </div>
+        <div class="col-sm-6 col-md-4 col-lg-3">
+            <div class="form-group">
+                <label for="id_protocolo" class="col-form-label">Protocolo</label>
+                <input type="text" id="id_protocolo" class="form-control" value="{{ clienteservicos.protocolo }}" disabled="true">
+                <small class="form-text text-muted">Protocolo do serviço prestado no register.</small>
+            </div>
+        </div>
+    </div>
+
+    <div class="form-row">
+        <div class="col-sm-12 col-md-10 col-lg-8">
+            <div class="form-group">
+                <label for="id_observacoes" class="col-form-label">Observações</label>
+                <textarea name="observacoes" cols="40" rows="2" class="textarea form-control" id="id_observacoes" disabled>{{ clienteservicos.observacoes }}</textarea>
+                <small class="form-text text-muted">Notas adicionais acerca do serviço.</small>
+            </div>
+        </div>
+    </div>
+
+    <div class="form-row">
+        <div class="col-sm-12 col-md-4">
+           <div class="form-group">
+                <div class="form-check">
+                    <label for="id_liquidado" class="form-check-label">
+                        <input type="checkbox" id='id_liquidado' class="checkboxinput form-check-input" disabled="true" {% if clienteservicos.liquidado %}checked{% endif %}>
+                        Liquidado?
+                    </label>
+                    <small class="form-text text-muted">Indica se o serviço já foi liquidado/pago.</small>
+                </div>
+            </div>
+        </div>
+        <div class="col-sm-12 col-md-4">
+           <div class="form-group">
+                <div class="form-check">
+                    <label for="id_contabilizar" class="form-check-label">
+                        <input type="checkbox" id='id_contabilizar' class="checkboxinput form-check-input" disabled="true" {% if clienteservicos.contabilizar %}checked{% endif %}>
+                        Contabilizar?
+                    </label>
+                    <small class="form-text text-muted">Indica se o serviço deve ser considerado para fins contábeis.</small>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    {% if clienteservicos.caixa %}
+    <div class="row">
+        <div class="col-sm-12 col-md-10 col-lg-8">
+            <div class="form-group">
+                <label for="id_caixa">Fechamento de Caixa:</label>
+                <div class="list-group">
+                    <a href="{% url 'f_caixa' %}?fcaixa_id={{ clienteservicos.caixa.id }}" class="list-group-item list-group-item-action" target="_blank">{{ clienteservicos.caixa }}</a>
+                </div>
+            </div>
+        </div>
+    </div>
+    {% endif %}
+
+    {% if clienteservicos.fatura %}
+    <div class="row">
+        <div class="col-sm-12 col-md-10 col-lg-8">
+            <div class="form-group">
+                <label for="id_fatura">Fatura:</label>
+                <div class="list-group">
+                    <a href="{% url 'cliente_faturas_detail' clienteservicos.fatura.pk %} " class="list-group-item list-group-item-action" target="_blank">{{ clienteservicos.fatura }}</a>
+                </div>
+            </div>
+        </div>
+    </div>
+    {% endif %}
+
+    {% if clienteservicos.fatura or  clienteservicos.caixa %}
+    <div class="row">
+        <div class="col-sm-12 col-md-10 col-lg-8">
+            <small class="text-danger text-justify">
+            {% if clienteservicos.fatura %}
+                A alteração das informações deste serviço foi desabilitada por razão de estar
+                relacionado a uma fatura.
+            {% elif clienteservicos.caixa %}
+                Devido ao serviço ter sido gerado via fechamento de caixa, sua edição está parcialmente bloqueada
+                para garantir a integridade das informações. Ainda é possível alterar os campos "Observações" e "Liquidado?"!
+            {% endif %}
+            </small>
+        </div>
+    </div>
+    {% endif %}
+
+    <br>
+
+    <div class="form-row">
+        <div class="col-sm-12 col-md-8">
+            <span class="text-muted float-right">
+                <a href="{% url 'cliente_servicos_list' %}" class="btn btn-outline-secondary" id="btn_voltar_para_lista" rule="button">Ver Lista</a>
+
+            {% if request.user.is_superuser or user|has_role:'oficial,contador' %}
+                {% if clienteservicos.fatura is None %}
+                    <a href="{% url 'cliente_servicos_edit' clienteservicos.pk %}" class="btn btn-outline-primary" rule="button">Editar</a>
+                {% else %}
+                    <button class="btn btn-light disabled">Editar</button>
+                {% endif %}
+                {% if clienteservicos.caixa is None and clienteservicos.fatura is None %}
+                    <a href="{% url 'cliente_servicos_delete' clienteservicos.pk %}" class="btn btn-outline-danger" rule="button">Apagar</a>
+                {% else %}
+                    <button class="btn btn-light disabled">Apagar</button>
+                {% endif %}
+            {% endif %}
+
+            </span>
+        </div>
+    </div>
+
+    <br>
+
+    <br>
+
+{% endblock content %}
+
+{% block javascript %}
+    <script src="{% static 'js/voltar_para_lista.js' %}"></script>
+{% endblock javascript %}

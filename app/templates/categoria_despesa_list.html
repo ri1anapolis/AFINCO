@@ -1,0 +1,152 @@
+{% extends 'base.html' %}
+{% load staticfiles %}
+{% load permission_tags %}
+{% load project_tags %}
+
+{% block title %}::: AFINCO ::: Categorias - Lista{% endblock title %}
+
+{% block content %}
+
+    {% if user|has_role:'oficial,contador' %}
+    <a href="{% url 'categoria_despesa_new' %}" rule="button" class="btn btn-outline-success float-right">+ Novo</a>
+    {% endif %}
+
+    <a href="#" data-toggle="collapse" rule="button" class="btn btn-sm btn-outline-info float-right mr-2" data-target="#filtrar" style="padding-bottom: .45rem;">
+        <svg class="i-filtrar" viewBox="0 0 32 32" width="24" height="24" fill="none" stroke="currentcolor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2">
+            <circle cx="14" cy="14" r="12"></circle>
+            <path d="M23 23 L30 30"></path>
+        </svg>
+    </a>
+
+    {% if filter.form.cleaned_data %}
+    <a class="mx-3 my-2 float-right small text-info" href="{% url 'categoria_despesa_list' %}">Limpar Filtros</a>
+    {% endif %}
+
+    <h3>Categorias de Despesas</h3>
+
+    <div id="filtrar" class="collapse">
+        <!-- busca //-->
+        <div class="card">
+            <div class="card-header">
+                Filtrar Categorias de Despesas
+            </div>
+            <form action="" method="get">
+                <div class="card-body">
+
+                    <div class="row">
+
+                        <div class="form-group col-sm-8 col-md-9 col-lg-4">
+                            {{ filter.form.ds.label_tag }}
+                            <div class="form-row">
+                                {{ filter.form.ds }}
+                            </div>
+                            <small class="form-text text-muted">{{ filter.form.ds.help_text }}</small>
+                        </div>
+
+                        <div class="form-group col-xs-6 col-sm-4 col-md-3 col-lg-2">
+                            {{ filter.form.at.label_tag }}
+                            <div class="form-row">
+                                {{ filter.form.at }}
+                            </div>
+                            <small class="form-text text-muted">{{ filter.form.at.help_text }}</small>
+                        </div>
+
+                        <div class="form-group col-sm-4 col-md-4 col-lg-2 col-xl-2">
+                            {{ filter.form.cr.label_tag }}
+                            <div class="form-row">
+                                {{ filter.form.cr }}
+                            </div>
+                            <small class="form-text text-muted">{{ filter.form.cr.help_text }}</small>
+                        </div>
+
+                        <div class="form-group col-sm-4 col-md-4 col-lg-2 col-xl-2">
+                            {{ filter.form.cc.label_tag }}
+                            <div class="form-row">
+                                {{ filter.form.cc }}
+                            </div>
+                            <small class="form-text text-muted">{{ filter.form.cc.help_text }}</small>
+                        </div>
+
+                        <div class="form-group col-sm-4 col-md-4 col-lg-2 col-xl-2">
+                            {{ filter.form.cd.label_tag }}
+                            <div class="form-row">
+                                {{ filter.form.cd }}
+                            </div>
+                            <small class="form-text text-muted">{{ filter.form.cd.help_text }}</small>
+                        </div>
+
+                    </div>
+
+                </div>
+                <div class="card-footer">
+                    <button id="btn_busca" type="submit" class="btn btn-lg btn-primary btn-block">
+                        Filtrar Categorias de Despesas
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+    <!-- fim busca //-->
+
+    <br>
+
+    {% if object_list %}
+
+    <div class="table-responsive table-responsive-xl" id='table_list_content'>
+
+        <table class="table table-hover table_link">
+            <thead>
+                <tr>
+                    <th scope="col">Descrição</th>
+                    <th scope="col" class="text-center">Cógigo RFB</th>
+                    <th scope="col" class="text-center">Conta Crédito</th>
+                    <th scope="col" class="text-center">Conta Débito</th>
+                    <th scope="col" class="text-center" style="width: 10%;">Ativo</th>
+                </tr>
+            </thead>
+            <tbody>
+            {% for categoria in object_list %}
+                <tr data-href="{% url 'categoria_despesa_detail' categoria.pk %}">
+                    <td>{{ categoria.identificacao }}</td>
+                    <td class="text-center">{{ categoria.codigo_rf }}</td>
+                    <td class="text-center">
+                    {% if categoria.conta_credito %}
+                        {{ categoria.conta_credito }}
+                    {% else %}
+                        ---
+                    {% endif %}</td>
+                    <td class="text-center">
+                    {% if categoria.conta_debito %}
+                        {{ categoria.conta_debito }}
+                    {% else %}
+                        ---
+                    {% endif %}</td>
+                    <td class="text-center">
+                        {% if categoria.ativo %}
+                            <img src="{% static 'admin/img/icon-yes.svg' %}" alt="Sim">
+                        {% else %}
+                            <img src="{% static 'admin/img/icon-no.svg' %}" alt="Não">
+                        {% endif %}
+                    </td>
+                </tr>
+
+            {% endfor %}
+            </tbody>
+        </table>
+
+    </div>
+    {% else %}
+        <p class="text-muted">Não há categorias para serem exibidas.</p>
+    {% endif %}
+
+    <br><br>
+
+    {% if is_paginated %}
+        {% include "pagination.html" %}
+    {% endif %}
+
+{% endblock content %}
+
+{% block javascript %}
+    <script src="{% static 'js/table_link.js' %}"></script>
+{% endblock javascript %}

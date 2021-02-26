@@ -1,0 +1,121 @@
+{% extends 'base.html' %}
+{% load permission_tags %}
+
+{% block title %}::: AFINCO ::: Perfil de Cliente - Detalhes{% endblock title%}
+
+{% block content %}
+
+    <h3>Perfís de Clientes</h3>
+    <span class="text-muted">Detalhes do perfil: {{ perfilcliente.nome }}</span>
+    <br><br>
+
+    <div class="form-row">
+
+        <div class="col-md-12 col-lg-9 col-xl-8">
+            <div class="form-group">
+                <label for="id_nome" class="col-form-label">Nome</label>
+                <div class="">
+                    <input type="text" value="{{ perfilcliente.nome }}" class="textinput textInput form-control" disabled="true">
+                    <small class="form-text text-muted">Identificação do Cliente</small>
+                </div>
+            </div>
+        </div>
+
+    </div>
+
+    <div class="form-row">
+
+        <div class="col-md-12 col-lg-9 col-xl-8">
+            <div class="form-group">
+                <label for="id_nome" class="col-form-label">Descrição</label>
+                <div class="">
+                    <input type="text" value="{% if perfilcliente.descricao is not None %}{{ perfilcliente.descricao }}{% endif %}" class="textinput textInput form-control" disabled="true">
+                    <small class="form-text text-muted">Descrição do perfil de cliente</small>
+                </div>
+            </div>
+        </div>
+
+    </div>
+
+    <div class="form-row">
+
+        <div class="col-xs-10 col-sm-7 col-md-5 col-lg-4 col-xl-3">
+            <div class="form-group">
+                <label for="id_periodo_pag" class="col-form-label ">Período de pagamento.</label>
+                <div class="">
+                    <select class="select form-control" disabled="true">
+                        <option value="">
+                        {% if perfilcliente.periodo_pag and perfilcliente.periodo_pag is not None %}
+                        {{ perfilcliente.get_periodo_pag_display }}
+                        {% else %}
+                        ---------
+                        {% endif %}
+                        </option>
+                    </select>
+                    <small iclass="form-text text-muted">Perído de tempo para fechamento de fatura.</small>
+                </div>
+            </div>
+        </div>
+
+    </div>
+
+    <div class="form-row">
+
+        <div class="col-md-12 col-lg-9 col-xl-8">
+            <div class="form-group">
+                <div id="div_id_ativo" class="form-check">
+                    <label for="id_ativo" class="form-check-label">
+                    <input type="checkbox" class="checkboxinput form-check-input"{% if perfilcliente.ativo %} checked {% endif %} disabled="true">Está ativo?</label>
+                    <small class="form-text text-muted">Indica se o cliente pode ser utilizado.</small>
+                </div>
+            </div>
+        </div>
+
+    </div>
+
+    <br>
+
+    <div class="row">
+
+        <div class="col-md-12 col-lg-9 col-xl-8">
+            <span class="text-muted float-right">
+                <a href="{% url 'perfil_cliente_list' %}" class="btn btn-outline-secondary" rule="button">Ver Lista</a>
+                {% if user|has_role:'oficial,contador' %}
+                <a href="{% url 'perfil_cliente_edit' perfilcliente.pk %}" class="btn btn-outline-primary" rule="button">Editar</a>
+                <a href="{% url 'perfil_cliente_delete' perfilcliente.pk %}" class="btn btn-outline-danger" rule="button">Apagar</a>
+                {% endif %}
+            </span>
+        </div>
+
+    </div>
+
+<br><br>
+
+    {% if clientes_list|length > 0 or faturas_list|length > 0 %}
+    <hr>
+    <div class="row">
+        <div class="col-12">
+            <div class="form-group">
+                <p class="form-text">
+                    Clientes Relacionados:
+
+                {% for cliente in clientes_list %}
+                    {% if user|has_role:'oficial,contador,supervisor_atendimento' %}
+                    <a href="{% url 'cliente_detail' cliente.pk %}" target="_blank">
+                    {% else %}
+                    <a href="#" disabled="true" onclick="return false;">
+                    {% endif %}
+                        <span class='border text-muted'><small>
+                            {{ cliente }}
+                        </small></span>
+                    </a>{% if forloop.last %}.{% else %}, {% endif %}
+                {% endfor %}
+                </p>
+            </div>
+        </div>
+    </div>
+    {% endif %}
+
+
+
+{% endblock content %}

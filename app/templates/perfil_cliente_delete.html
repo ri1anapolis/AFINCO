@@ -1,0 +1,21 @@
+{% extends "base.html" %}
+{% load permission_tags %}
+
+{% block title %}::: AFINCO ::: Perfil de Cliente - Remover{% endblock title %}
+
+{% block content %}
+    <h3>Perfís de Clientes</h3>
+    <span class="text-muted">Remover perfil: <b>{{ perfilcliente.nome }}</b></span>
+    <br /><br />
+    <form action="" method="post">
+        {% csrf_token %}
+        <p>Você tem certeza que deseja remover este perfil de cliente permanentemente?</p>
+        <span class="text-muted float-right">
+            <a href="{% url 'perfil_cliente_detail' perfilcliente.pk %}" class="btn btn-outline-secondary" rule="button">Cancelar</a>
+            {% if user|has_role:'oficial,contador' %}
+            <input type="submit" class="btn btn-outline-danger" value="Sim! Remover!">
+            {% endif %}
+        </span>
+    </form>
+    <br />
+{% endblock content %}

@@ -1,0 +1,184 @@
+{% extends 'base.html' %}
+
+{% block title %}::: AFINCO ::: Relatórios{% endblock title %}
+
+{% block content %}
+    <h3>Relatórios Contábeis</h3>
+    <br>
+    <div class="row">
+
+        <div id="form_content" class="col-lg-3">
+            <div class="card">
+                <div class="card-header">
+                    Solicitar Relatório
+                </div>
+                <div class="card-body">
+                    <form id="date_form">
+                        <div class="form-group">
+                            <label for="tipo_relatorio" class="control-label requiredField">Relatório</label>
+                            <select class="custom-select" name="tipo_relatorio" id="tipo_relatorio">
+                                <option value="rd">Receitas e Despesas</option>
+                                <option value="em">Emolumentos</option>
+                                <option value="dp">Depósito Prévio</option>
+                                <option value="cl">Carnê Leão</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label for="data_ini" class="control-label requiredField">Data Inicial</label>
+                            <input id="data_ini" type="date" class="form-control" name="data_ini" required="true">
+                        </div>
+                        <div class="form-group">
+                            <label for="data_end" class="control-label requiredField">Data Final</label>
+                            <input id="data_end" type="date" class="form-control" name="data_end" required="true">
+                        </div>
+                    </form>
+                </div>
+                <div class="card-footer">
+                    <button id="submit_form" type="button" class="btn btn-block btn-primary" onclick="check_form()" disabled="true">Enviar</button>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-lg-9">
+            <div class="card" id="content_card">
+                <div id="card_header" class="card-header">
+                    Painel de Resultados
+                </div>
+                <div id="card_body" class="card-body">
+                    <h4 class="card-title">Solicitar Relatório</h4>
+                    <p class="card-text">Solicite o relatório informando o relatório e o período no formulário ao lado!</p>
+                    <div class="card-deck">
+                        <div class="card">
+                            <div class="card-body p-2">
+                                <h6 class="text-center">Receitas e Despesas</h6>
+                                <small class="text-justify">
+                                    <p>Retorna informações referentes aos valores de entrada no caixa, devoluções, despesas, e conversão de depósito prévio em emolumentos.</p>
+                                    <p>Tais informações são disponibilizadas via arquivo TXT para download, já formatado para importação em software contábil.</p>
+                                    <p class="text-danger">Os valores de emolumentos estão disponíveis a partir de 28/06/2018!</p>
+                                </small>
+                            </div>
+                        </div>
+                        <div class="card">
+                            <div class="card-body p-2">
+                                <h6 class="text-center">Emolumentos</h6>
+                                <small class="text-justify">
+                                    <p>Baseado nas informações de envios de selos ao TJGO, este relatório informa os valores dos emolumentos do período.</p>
+                                    <p>O relatório é disponibilizado para download em formato XLSX.</p>
+                                    <p class="text-danger">Os valores de emolumentos estão disponíveis a partir de 28/06/2018!</p>
+                                </small>
+                            </div>
+                        </div>
+                        <div class="w-100 my-3 d-block "><!-- wrap every 2 on sm--></div>
+                        <div class="card">
+                            <div class="card-body p-2">
+                                <h6 class="text-center">Depósito Prévio</h6>
+                                <small class="text-justify">
+                                    <p>Este relatório apresenta um extrato da situação dos protocolos incluídos no período informado. Status dos protocolos, datas, valores, saldos, complementos e devoluções são relacionados para enriquecer o relatório.</p>
+                                    <p>O relatório é disponibilizado para download em formato XLSX.</p>
+                                </small>
+                            </div>
+                        </div>
+                        <div class="card">
+                            <div class="card-body p-2">
+                                <h6 class="text-center">Carnê Leão</h6>
+                                <small class="text-justify">
+                                    <p>Gera um arquivo de Importação de Escrituração para o Carnê Leão.</p>
+                                    <p>O relatório é disponibilizado para download em formato TXT/CSV e tem por informações os lançamentos de despesas do período.</p>
+                                </small>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div id="card_download" class="card-footer" style="display: none;">
+                </div>
+            </div>
+
+            <div id="form_alert" class="alert alert-info alert-dismissible" style="display: none;">
+                <button type="button" class="close" data-dismiss="alert">&times;</button>
+                A data final deve ser maior ou igual à data inicial!
+            </div>
+
+        </div>
+
+    </div>
+
+{% endblock content %}
+
+{% block javascript %}
+    <script type="text/javascript">
+
+        $(document).on('change', 'input', function() {
+            var data_ini = $('#data_ini').val();
+            var data_end = $('#data_end').val();
+            var btn = $('#submit_form').prop('disabled');
+            if (data_ini !== '' && data_end !== ''){
+                if (data_ini <= data_end) {
+                    $('#form_alert').hide();
+                    $('#submit_form').prop('disabled', false);
+                } else {
+                    $('#form_alert').show();
+                    if (btn == false){
+                        $('#submit_form').prop('disabled', true);
+                    };
+                } ;
+            } else {
+                if (btn == false){
+                    $('#submit_form').prop('disabled', true);
+                };
+            };
+        });
+
+        function solicitaRelatorio(data_ini, data_end) {
+            $.ajax({
+                url: '{% url "get_relatorio" %}',
+                data: {
+                    'data_ini': data_ini,
+                    'data_end': data_end,
+                    'relatorio': $('#tipo_relatorio').val()
+                },
+                dataType: 'json',
+                success: function (data) {
+                    if (data.erro != null && data.erro.len > 0) {
+                        $('#card_body').empty().append('<h4 class="card-title">Algo inesperado aconteceu!</h4><p class="card-text">Houve algum problema ao tentar encontrar os arquivos:</p><p class="card-text">' + data.erro + '</p><p>Entre em contato com o suporte técnico para mais informações!</p>')
+                        $('#card_download').empty().hide();
+                        if (data.relatorio != null && data.relatorio.length > 0) {
+                            var relatorio = data.relatorio
+                        } else {
+                            var relatorio = 'Erro'
+                        }
+                        $('#card_header').empty().html(relatorio);
+                    } else if (data.file != null) {
+                        $('#card_body').empty().append('<h4 class="card-title">Seu relatório está pronto!</h4><p class="card-text">Foram encontrados ' + data.registros + ' registros no período de ' + data.periodo + '.</p>')
+                        $('#card_header').empty().html(data.relatorio);
+                        $('#card_download').show()
+                        $('#card_download').empty().append('<a target="_blank" id="download_link" href="' + data.file + '" class="btn btn-primary btn-block">Baixar o relatório em formato excel</a>')
+                    } else {
+                        $('#card_body').empty().append('<h4 class="card-title">Não há informações para o período!</h4><p class="card-text">Não foram encontrados registros no período de ' + data.periodo + '.</p>')
+                        $('#card_download').empty().hide();
+                        $('#card_header').empty().html(data.relatorio);
+                    }
+                }
+            });
+
+        };
+
+        function check_form() {
+            var date_form = $('#date_form');
+            var data_ini = $('#data_ini').val();
+            var data_end = $('#data_end').val();;
+
+            if(! date_form[0].checkValidity()) {
+              // verificado que o formulário está inválido, cria-se um input submit
+              //no formulário, emula-se o click e então o remove.
+              // isso faz com que o sistema pense que foi feita uma tentativa de
+              //envio do formulário, fazendo que o html5 apresente os erros de validação
+              $('<input type="submit">').hide().appendTo(date_form).click().remove();
+            } else if (data_ini > data_end){
+                $('#form_alert').show();
+            } else {
+                solicitaRelatorio(data_ini, data_end);
+            };
+        };
+
+    </script>
+{% endblock javascript %}

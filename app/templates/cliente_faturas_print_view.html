@@ -1,0 +1,178 @@
+{% load compress %}
+{% load static %}
+{% load project_tags %}
+<!DOCTYPE html>
+<html lang="pt=br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+{% compress css %}
+    <link rel="stylesheet" href="{% static "css/bootstrap.min.css" %}" type="text/css"> <!--  Bootstrap 4.3.1 CSS -->
+    <link rel="stylesheet" href="{% static "css/main.css" %}?v=0044" type="text/css"> <!-- o trecho ?v=00002 ajuda a atualizar o cache dos arquivos estáticos. basta incrementar o numero! /!-->
+{% endcompress %}
+    <title>Fatura de Prestação de Serviços</title>
+</head>
+<body onload="window.print()">
+<div class="container">
+
+    <br>
+    {% if clientefaturas.liquidado %}
+        <h3 class="text-center">COMPROVANTE DE QUITAÇÃO DE SERVIÇOS</h3>
+    {% else %}
+        <h3 class="text-center">EXTRATO DE PRESTAÇÃO DE SERVIÇOS</h3>
+    {% endif %}
+    <p class="text-muted text-center">CARTÓRIO DE REGISTRO DE IMÓVEIS DA PRIMEIRA CIRCUNSCRIÇÃO DE ANÁPOLIS/GO</p>
+    <br>
+
+    <div class="row">
+        <div class="col-10">
+            <div class="form-group">
+                <label for="id_cliente" class="col-form-label">Cliente:</label>
+                <input id="id_cliente" type='text' class="form-control" value="{{ clientefaturas.cliente.nome }}" readonly>
+            </div>
+        </div>
+        <div class="col-2">
+            <div class="form-group">
+                <label for="id_cliente" class="col-form-label">Emissão:</label>
+                <input id="id_cliente" type='text' class="form-control" value="{{ clientefaturas.data_fatura|date:'d/m/Y' }}" readonly>
+            </div>
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="col-6">
+            <div class="form-row">
+            {% if clientefaturas.liquidado %}
+                <div class="col-5">
+            {% else %}
+                <div class="col-7">
+            {% endif %}
+                    <div class="form-group">
+                    {% if clientefaturas.liquidado %}
+                        <label for="id_data_pagamento" class="col-form-label">Quitação:</label>
+                        <input id="id_data_pagamento" type='text' class="form-control" value="{{ clientefaturas.data_pagamento|date:'d/m/Y' }}" readonly>
+                    {% else %}
+                        <label for="id_valor_faturas" class="col-form-label">Total dos Serviços:</label>
+                        <input type="text" id="id_valor_faturas" class="form-control" value="R$ {{ clientefaturas.valor_servicos }}" readonly>
+                    {% endif %}
+                    </div>
+                </div>
+            {% if clientefaturas.liquidado %}
+                <div class="col-7">
+            {% else %}
+                <div class="col-5">
+            {% endif %}
+                    <div class="form-group">
+                    {% if clientefaturas.liquidado %}
+                        <label for="id_saldo_cliente" class="col-form-label">Saldo em conta:</label>
+                        <input type="text" id="id_saldo_cliente" class="form-control" value="{{ clientefaturas.cliente.saldo|floatformat:2 }}" readonly>
+                    {% else %}
+                        <label for="id_valor_descontos" class="col-form-label">Desconto:</label>
+                        <input type="text" id="id_valor_descontos" class="form-control" value="R$ {{ clientefaturas.valor_descontos }}" readonly>
+                    {% endif %}
+                    </div>
+                </div>
+            </div>
+
+            <div class="form-row">
+                <div class="col-7">
+                    <div class="form-group">
+                        <label for="id_valor_fatura" class="col-form-label">Total da Fatura:</label>
+                        <input type="text" id="id_valor_fatura" class="form-control" value="R$ {{ clientefaturas.valor_fatura|floatformat:2 }}" readonly>
+                    </div>
+                </div>
+                <div class="col-5">
+                    <div class="form-group">
+                    {% if clientefaturas.liquidado %}
+                        <label for="id_status" class="col-form-label">Status:</label>
+                        <input type="text" id="id_status" class="form-control" value="Liquidado" readonly>
+                    {% else %}
+                        <label for="id_valor_descontos" class="col-form-label">Vencimento:</label>
+                        <input type="date" id="id_valor_descontos" value="{% addDaysToDate clientefaturas.data_fatura 8 %}" class="form-control" style="background-color : #e9ecef; ">
+                    {% endif %}
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-6">
+            <div class="form-group">
+                <label for="id_observacoes" class="col-form-label">Observações:</label>
+                <textarea name="observacoes" id="id_observacoes" cols="40" rows="5" class="textarea form-control" style="background-color : #e9ecef;">{{ clientefaturas.observacoes }}
+                </textarea>
+            </div>
+        </div>
+    </div>
+
+    <br>
+
+    {% if servicos_relacionados %}
+    <div class="row">
+        <div class="col-12">
+            <p class="form-text">
+                Discriminação dos serviços:
+            </p>
+            <table class="table table-striped">
+                <thead>
+                    <tr>
+                        <th style="width: 13%">Data:</th>
+                        <th style="width: 13%">Protocolo:</th>
+                        <th style="width: 18%">Valor</th>
+                        <th>Descrição:</th>
+                    </tr>
+                </thead>
+                <tbody>
+                {% for servico in servicos_relacionados %}
+                    <tr>
+                        <td>{{ servico.data|date:'d/m/Y' }}</td>
+                        <td>
+                            {% if servico.protocolo %}
+                                {{ servico.tipo_protocolo }}.{{ servico.protocolo}}
+                            {% else %}
+                                ----
+                            {% endif %}</td>
+                        <td>R$ {{ servico.valor|floatformat:2 }}</td>
+                        <td class="py-0">
+                            <textarea name="observacoes" cols="40" rows="1" 
+                                class="textarea form-control-sm form-control-plaintext mt-2"
+                                >{{ servico.observacoes }}</textarea>
+                        </td>
+                    </tr>
+                {% endfor %}
+                    <tr>
+                        <td colspan="4" class="border-bottom text-center text-muted">
+                            Fim da lista de serviços.
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+    
+    <br>
+    {% endif %}
+
+    <div class="row">
+        <div class="col-12 text-right">
+            <p>Documento emitido por 
+                {% if user.first_name %}
+                    {{ user.first_name }}
+                    {% if user.last_name %} {{ user.last_name }}{% endif %}
+                    ( {{ user.username }} ).
+                {% else %}
+                    {{ user.username }}.
+                {% endif %}
+            </p>
+        </div>
+    </div>
+
+    <br><br>
+
+</div>
+
+{% compress js %}
+    <script src="{% static 'js/jquery.min.js' %}"></script><!-- jquery 3.4.0 -->
+    <script src="{% static 'js/bootstrap.bundle.min.js' %}"></script> <!-- bootstrap 4.3.1 + popper 1.14.7 -->
+{% endcompress %}
+</body>
+</html>

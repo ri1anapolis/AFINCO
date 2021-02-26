@@ -1,0 +1,31 @@
+{
+  "name": "contabil",
+  "version": "1.0.0",
+  "main": "index.js",
+  "repository": "https://undr3ad@bitbucket.org/undr3ad/contabil.git",
+  "author": "André Martins <fmartins.andre@gmail.com>",
+  "license": "MIT",
+  "scripts": {
+    "build": "NODE_ENV=${NODE_ENV:-production} webpack --mode=production",
+    "start": "webpack serve"
+  },
+  "engines": {
+    "node": ">=12"
+  },
+  "devDependencies": {
+    "@types/superagent": "^4.1.10",
+    "@webpack-cli/init": "^1.0.3",
+    "babel-eslint": "^10.1.0",
+    "eslint": "^7.13.0",
+    "eslint-config-prettier": "^6.15.0",
+    "eslint-plugin-prettier": "^3.1.4",
+    "prettier": "^2.1.2",
+    "webpack": "^5.6.0",
+    "webpack-cli": "^4.2.0",
+    "webpack-dev-server": "^3.11.0"
+  },
+  "dependencies": {
+    "superagent": "^6.1.0",
+    "superagent-cache": "^3.1.1"
+  }
+}

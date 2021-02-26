@@ -1,0 +1,61 @@
+{% extends 'base.html' %}
+{% load static %}
+{% load permission_tags %}
+{% load crispy_forms_tags %}
+
+{% block title %}::: AFINCO ::: Faturas - Adicionar{% endblock title %}
+
+{% block content %}
+
+    <h3>Faturas de Clientes</h3>
+    <span class="text-muted">Adicionar nova fatura</span>
+    <br><br>
+
+    <form method="post">
+        {% csrf_token %}
+
+        <div class="form-row">
+            <div class="col-sm-12 col-md-12 col-lg-9">
+                {{ form.cliente|as_crispy_field }}
+            </div>
+
+        </div>
+
+        <div class="form-row">
+            <div class="col-sm-12 col-md-12 col-lg-6">
+                {{ form.observacoes|as_crispy_field }}
+            </div>
+
+        </div>
+
+        <br>
+
+        <div class="form-row">
+            <div class="col-sm-12 col-md-12 col-lg-9">
+                <span class="text-muted float-right">
+                    <a href="{% url 'cliente_faturas_list' %}" id="btn_voltar_para_lista" class="btn btn-outline-secondary" rule="button">Cancelar</a>
+                    {% if user|has_role:'oficial,contador,supervisor_atendimento' %}
+                    <input type="submit" class="btn btn-outline-success ml-2" value="Salvar">
+                    {% endif %}
+                </span>
+            </div>
+        </div>
+
+        <br>
+
+    </form>
+
+    <br>
+
+{% endblock content %}
+
+{% block javascript %}
+    <script src="{% static 'js/voltar_para_lista.js' %}"></script>
+    <script>
+        $(document).ready(function(){
+            if ( $('#id_cliente').length > 0 ){
+                $('#id_cliente').focus();
+            }
+        });
+    </script>
+{% endblock javascript %}

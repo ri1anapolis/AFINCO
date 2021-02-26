@@ -1,0 +1,177 @@
+{% extends 'base.html' %}
+{% load staticfiles %}
+{% load permission_tags %}
+{% load project_tags %}
+
+{% block title %}::: AFINCO ::: Serviços - Lista{% endblock title %}
+
+{% block content %}
+
+    {% if user|has_role:'oficial,contador' %}
+    <a href="{% url 'cliente_servicos_new' %}" rule="button" class="btn btn-outline-success float-right">+ Novo</a>
+    {% endif %}
+
+    <a href="#" data-toggle="collapse" rule="button" class="btn btn-sm btn-outline-info float-right mr-2" data-target="#filtrar" style="padding-bottom: .45rem;">
+        <svg class="i-filtrar" viewBox="0 0 32 32" width="24" height="24" fill="none" stroke="currentcolor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2">
+            <circle cx="14" cy="14" r="12"></circle>
+            <path d="M23 23 L30 30"></path>
+        </svg>
+    </a>
+
+    {% if filter.form.cleaned_data %}
+    <a class="mx-3 my-2 float-right small text-info" href="{% url 'cliente_servicos_list' %}">Limpar Filtros</a>
+    {% endif %}
+
+    <h3>Serviços aos Clientes</h3>
+
+
+
+
+    <div id="filtrar" class="collapse">
+        <!-- busca //-->
+        <div class="card">
+            <div class="card-header">
+                Filtrar Serviços
+            </div>
+            <form action="" method="get">
+                <div class="card-body">
+
+                    <div class="row">
+
+                        <div class="form-group col-md-8 col-lg-8">
+                            {{ filter.form.cn.label_tag }}
+                            <div class="form-row">
+                                {{ filter.form.cn }}
+                            </div>
+                            <small class="form-text text-muted">{{ filter.form.cn.help_text }}</small>
+                        </div>
+
+                        <div class="form-group col-xs-6 col-sm-6 col-md-2 col-lg-2">
+                            {{ filter.form.lq.label_tag }}
+                            <div class="form-row">
+                                {{ filter.form.lq }}
+                            </div>
+                            <small class="form-text text-muted">{{ filter.form.lq.help_text }}</small>
+                        </div>
+
+                        <div class="form-group col-xs-6 col-sm-6 col-md-2 col-lg-2">
+                            {{ filter.form.ct.label_tag }}
+                            <div class="form-row">
+                                {{ filter.form.ct }}
+                            </div>
+                            <small class="form-text text-muted">{{ filter.form.ct.help_text }}</small>
+                        </div>
+
+                    </div>
+
+                    <div class="row">
+
+                        <div class="form-group col-md-6 col-lg-5 col-xl-4">
+                            {{ filter.form.vb.label_tag }}
+                            <div class="form-row">
+                                {{ filter.form.vb }}
+                            </div>
+                            <small class="form-text text-muted">{{ filter.form.vb.help_text }}</small>
+                        </div>
+
+                        <div class="form-group col-md-6 col-lg-5 col-xl-4">
+                            {{ filter.form.db.label_tag }}
+                            <div class="form-row">
+                                {{ filter.form.db }}
+                            </div>
+                            <small class="form-text text-muted">{{ filter.form.db.help_text }}</small>
+                        </div>
+
+                        <div class="form-group col-sm-6 col-md-4 col-lg-2 col-xl-2">
+                            {{ filter.form.pr.label_tag }}
+                            <div class="form-row">
+                                {{ filter.form.pr }}
+                            </div>
+                            <small class="form-text text-muted">{{ filter.form.pr.help_text }}</small>
+                        </div>
+
+                    </div>
+
+                </div>
+                <div class="card-footer">
+                    <button id="btn_busca" type="submit" class="btn btn-lg btn-primary btn-block">
+                        Filtrar serviços
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+    <!-- fim busca //-->
+
+    <br>
+
+    {% if object_list %}
+
+    <div class="table-responsive table-responsive-xl" id='table_list_content'>
+
+        <table class="table table-hover table_link">
+            <thead>
+                <tr>
+                    <th scope="col">Data</th>
+                    <th scope="col">Protocolo</th>
+                    <th scope="col">Cliente</th>
+                    <th scope="col">Valor</th>
+                    <th scope="col" style="width: 10%;">Contabilizar</th>
+                    <th scope="col" style="width: 10%;">Liquidado</th>
+                </tr>
+            </thead>
+            <tbody>
+            {% for clientes_servicos in object_list %}
+                <tr
+                    data-href="{% url 'cliente_servicos_detail' clientes_servicos.pk %}"
+                    {% if  clientes_servicos.ct and not clientes_servicos.lq and not clientes_servicos.fatura %}
+                        data-servicoid="{{ clientes_servicos.pk }}"
+                        data-clienteid="{{ clientes_servicos.cliente.pk }}"
+                    {% endif %}
+                >
+                    <td>{{ clientes_servicos.data|date:'d/m/Y'}}</td>
+                    <td>
+                    {% if clientes_servicos.tipo_protocolo and clientes_servicos.protocolo %}
+                        {{ clientes_servicos.tipo_protocolo }}.{{ clientes_servicos.protocolo }}
+                    {% else %}
+                        N/A
+                    {% endif %}
+                    </td>
+                    <td>{{ clientes_servicos.cliente|truncatechars:50 }}</td>
+                    <td class="text-nowrap"> R$ {{ clientes_servicos.valor|floatformat:2|intseparator }}</td>
+                    <td class="text-center">
+                        {% if clientes_servicos.contabilizar %}
+                            <img src="{% static 'admin/img/icon-yes.svg' %}" alt="Sim">
+                        {% else %}
+                            <img src="{% static 'admin/img/icon-no.svg' %}" alt="Não">
+                        {% endif %}
+                    </td>
+                    <td class="text-center">
+                        {% if clientes_servicos.liquidado %}
+                            <img src="{% static 'admin/img/icon-yes.svg' %}" alt="Sim">
+                        {% else %}
+                            <img src="{% static 'admin/img/icon-no.svg' %}" alt="Não">
+                        {% endif %}
+                    </td>
+                </tr>
+
+            {% endfor %}
+            </tbody>
+        </table>
+
+    </div>
+    {% else %}
+        <p class="text-muted">Não há serviços para serem exibidos.</p>
+    {% endif %}
+
+    <br><br>
+
+    {% if is_paginated %}
+        {% include "pagination.html" %}
+    {% endif %}
+
+{% endblock content %}
+
+{% block javascript %}
+    <script src="{% static 'js/table_link.js' %}"></script>
+{% endblock javascript %}

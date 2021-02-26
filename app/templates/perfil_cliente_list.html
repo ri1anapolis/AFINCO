@@ -1,0 +1,32 @@
+{% extends 'base.html' %}
+{% load permission_tags %}
+
+{% block title %}::: AFINCO ::: Perfís de Clientes - Lista{% endblock title %}
+
+{% block content %}
+
+    {% if user|has_role:'oficial,contador' %}
+    <a href="{% url 'perfil_cliente_new' %}" class="btn btn-outline-success float-right">+ Novo</a>
+    {% endif %}
+    <h3>Perfís de Clientes</h3>
+
+    <br>
+    <div class="list-group">
+    {% if object_list %}
+
+    {% for perfil_cliente in object_list %}
+        <a href="{% url 'perfil_cliente_detail' perfil_cliente.pk %}" class="list-group-item{% if not perfil_cliente.ativo %} text-muted {% endif %}">
+            {{ perfil_cliente.nome }}
+        {% if not perfil_cliente.ativo %}
+            <span class="float-right badge badge-pill badge-secondary mt-1">Inativo</span>
+        {% endif %}
+        </a>
+    {% endfor %}
+
+    {% else %}
+        <p>Não há perfís de clientes cadastrados até o momento.</p>
+
+    {% endif %}
+
+    </div>
+{% endblock content %}

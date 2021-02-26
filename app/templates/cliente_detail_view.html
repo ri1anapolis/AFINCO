@@ -1,0 +1,264 @@
+{% extends 'base.html' %}
+{% load static %}
+{% load project_tags %}
+{% load permission_tags %}
+
+{% block title %}::: AFINCO ::: Clientes - Detalhes{% endblock title%}
+
+{% block content %}
+
+    <h3>Clientes</h3>
+    <span class="text-muted">Detalhes do cliente: {{ cliente.nome }}</span>
+    {% if not cliente.outorgante %}
+    <br>
+    <span class="text-muted">Saldo em conta: R$ {{ cliente.saldo|floatformat:2|intseparator }}</span>
+    <input name="saldo_faturado" type="hidden" value="{{ cliente.saldo_faturado|floatformat:2|intseparator }}" disabled>
+    {% endif %}
+    <br><br>
+
+    {% if cliente.outorgante %}
+    <div class="form-row">
+
+        <div class="col-md-12 col-lg-9 col-xl-8">
+            <div class="form-group">
+                <label for="id_outorgante" class="col-form-label ">Outorgante</label>
+                <div class="">
+                    <input type="text" id="id_outorgante" value="{{ cliente.outorgante }}" class="textinput textInput form-control" disabled="true">
+                    <small class="form-text text-muted">Pessoa/Entidade que é representada por este cliente (quando aplicável).</small>
+                </div>
+            </div>
+        </div>
+
+    </div>
+    {% endif %}
+
+    <div class="form-row">
+
+        <div class="col-md-12 col-lg-9 col-xl-8">
+            <div class="form-group">
+                <label for="id_nome" class="col-form-label">Nome</label>
+                <div class="">
+                    <input type="text" value="{{ cliente.nome }}" class="textinput textInput form-control" disabled="true">
+                    <small class="form-text text-muted">Identificação do Cliente</small>
+                </div>
+            </div>
+        </div>
+
+    </div>
+
+    <div class="form-row">
+
+        <div class="col-sm-5 col-md-4 col-lg-3 col-xl-3">
+            <div class="form-group">
+                <label for="id_perfil" class="col-form-label ">Perfil</label>
+                <div class="">
+                    <select class="select form-control" disabled="true">
+                        <option value="" selected>
+                        {% if cliente.perfil and cliente.perfil is not None %}
+                        {{ cliente.perfil }}
+                        {% else %}
+                        ---------
+                        {% endif %}
+                        </option>
+                    </select>
+                    <small class="form-text text-muted">Identificação do perfil de cliente.</small>
+                </div>
+            </div>
+        </div>
+
+    </div>
+
+    <div class="form-row">
+
+        <div class="col-sm-5 col-md-4 col-lg-3 col-xl-2">
+            <div class="form-group">
+                <label for="id_tipo_documento" class="col-form-label ">Tipo de documento</label>
+                <div class="">
+                    <select class="select form-control" disabled="true">
+                        <option value="">
+                            {% if cliente.tipo_documento and cliente.tipo_documento is not None %}
+                            {{ cliente.get_tipo_documento_display }}
+                            {% else %}
+                            ---------
+                            {% endif %}
+                        </option>
+                    </select>
+                    <small class="form-text text-muted">Tipo de documento utilizado.</small>
+                </div>
+            </div>
+        </div>
+
+        {% if cliente.tipo_documento and cliente.tipo_documento is not None %}
+        {% if cliente.tipo_documento == 'PF' %}
+        <div class="col-sm-7 col-md-5 col-lg-4 col-xl-3">
+            <div id="div_id_cpf" class="form-group">
+                <label for="id_cpf" class="col-form-label ">CPF</label>
+                <div class="">
+                    <input type="text" value="{{ cliente.cpf|cpf }}" class="textinput textInput form-control id_cpf" disabled="true">
+                    <small class="form-text text-muted">Número cadastro de pessoa física.</small>
+                </div>
+            </div>
+        </div>
+        {% elif cliente.tipo_documento == 'PJ' %}
+        <div class="col-sm-7 col-md-5 col-lg-4 col-xl-3">
+            <div id="div_id_cnpj" class="form-group">
+                <label for="id_cnpj" class="col-form-label ">CNPJ</label>
+                <div class="">
+                    <input type="text" value="{{ cliente.cnpj|cnpj }}" class="textinput textInput form-control id_cnpj" disabled="true">
+                    <small class="form-text text-muted">Número cadastro nacional de pessoa jurídica.</small>
+                </div>
+            </div>
+        </div>
+        {% elif cliente.tipo_documento == 'EX' %}
+        <div class="col-sm-7 col-md-5 col-lg-4 col-xl-3">
+            <div id="div_id_estrangeiro" class="form-group">
+                <label for="id_estrangeiro" class="col-form-label ">Documento Estrangeiro</label>
+                <div class="">
+                    <input type="text" value="{{ cliente.estrangeiro }}" class="textinput textInput form-control" disabled="true">
+                    <small id="hint_id_estrangeiro" class="form-text text-muted">Documento estrangeiro de identificação.</small>
+                </div>
+            </div>
+        </div>
+        {% endif %}
+        {% endif %}
+
+    </div>
+
+    <div class="form-row">
+
+        <div class="col-md-4 col-lg-3 col-xl-3">
+            <div class="form-group">
+                <label for="id_telefone" class="col-form-label ">Telefone</label>
+                <div class="">
+                    <input value="{% if cliente.telefone %}{{ cliente.telefone|phone}}{% else %}---{% endif %}" class="textinput textInput form-control{% if cliente.telefone %} id_telefone{% endif %}" disabled="true">
+                    <small class="form-text text-muted">Telefone de contato.</small>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-8 col-lg-6 col-xl-5">
+            <div class="form-group">
+                <label for="id_email" class="col-form-label ">E-mail</label>
+                <div class="">
+                    <input type="text" value="{% if cliente.email %}{{ cliente.email}}{% else %}---{% endif %}" class="textinput textInput form-control" disabled="true">
+                    <small class="form-text text-muted">Endereço eletrônico do cliente.</small>
+                </div>
+            </div>
+        </div>
+
+    </div>
+
+    <div class="form-row">
+
+        <div class="col-md-12 col-lg-9 col-xl-8">
+            <div class="form-group">
+                <label for="id_endereco" class="col-form-label ">Endereço</label>
+                <div class="">
+                    <input type="text" value="{% if cliente.endereco is not None %}{{ cliente.endereco}}{% endif %}" class="textinput textInput form-control" disabled="true">
+                    <small class="form-text text-muted">Endereço completo do cliente.</small>
+                </div>
+            </div>
+        </div>
+
+    </div>
+
+    <div class="form-row">
+        <div class="col-md-6 col-lg-5 col-xl-4">
+            <div class="form-group">
+                <div id="div_id_ativo" class="form-check">
+                    <label for="id_ativo" class="form-check-label">
+                    <input type="checkbox" class="checkboxinput form-check-input"{% if cliente.ativo %} checked {% endif %} disabled="true">Está ativo?</label>
+                    <small class="form-text text-muted">Indica se o cliente pode ser utilizado.</small>
+                </div>
+            </div>
+        </div>
+        {% if not cliente.outorgante %}
+        <div class="col-md-6 col-lg-5 col-xl-4">
+            <div class="form-group">
+                <div id="div_id_verifica_saldo" class="form-check">
+                    <label for="id_verifica_saldo" class="form-check-label">
+                    <input type="checkbox" class="checkboxinput form-check-input"{% if cliente.verifica_saldo %} checked {% endif %} disabled="true">Verificação de Saldo</label>
+                    <small class="form-text text-muted">Somente serão lançados serviços ao cliente caso este possua saldo suficiente.</small>
+                </div>
+            </div>
+        </div>
+        {% endif %}
+    </div>
+
+    <br>
+
+    <div class="row">
+
+        <div class="col-md-12 col-lg-9 col-xl-8">
+
+            {% if not cliente.outorgante %}
+            <a href="?print" target="_blank" rule="button" class="btn btn-outline-info">Extrato da Conta</a>
+            {% endif %}
+
+            <span class="text-muted float-right">
+                <a href="{% url 'cliente_list' %}" class="btn btn-outline-secondary" rule="button">Ver Lista</a>
+                {% if cliente.outorgante %}
+                <a href="{% url 'cliente_detail' cliente.outorgante.pk %}" class="btn btn-secondary" rule="button">Ver Outorgante</a>
+                {% endif %}
+                {% if user|has_role:'oficial,contador,supervisor_atendimento' %}
+                <a href="{% url 'cliente_edit' cliente.pk %}" class="btn btn-outline-primary" rule="button">Editar</a>
+                {% endif %}
+                {% if user|has_role:'oficial,contador' %}
+                <a href="{% url 'cliente_delete' cliente.pk %}" class="btn btn-outline-danger" rule="button">Apagar</a>
+                {% endif %}
+            </span>
+        </div>
+
+    </div>
+
+    {% if outorgados_list|length > 0 %}
+    <hr>
+    <div class="row">
+        <div class="col-md-12 col-lg-9 col-xl-8">
+            <p class="form-text">
+                Representantes (Clientes Outorgados):
+            </p>
+            <table class="table table-striped table-sm table_link">
+                <thead>
+                    <tr>
+                        <th>Nome</th>
+                        <th>Documento</th>
+                        <th class="text-center" style="width:10%;">Ativo?</th>
+                    </tr>
+                </thead>
+                <tbody>
+                {% for outorgado in outorgados_list %}
+                    <tr data-href="{% url 'cliente_detail' outorgado.pk %}">
+                        <td>{{ outorgado.nome }}</td>
+                        <td>
+                            {% if outorgado.tipo_documento == 'PF' %}
+                                {{ outorgado.get_tipo_documento_display }}: {{ outorgado.cpf|cpf }}
+                            {% elif outorgado.tipo_documento == 'PJ' %}
+                                {{ outorgado.get_tipo_documento_display }}: {{ outorgado.cnpj|cnpj }}
+                            {% elif outorgado.tipo_documento == 'EX' %}
+                                {{ outorgado.get_tipo_documento_display }}: {{ outorgado.estrangeiro }}
+                            {% else %}
+                                ----
+                            {% endif %}</td>
+                        <td class="text-center">
+                            {% if outorgado.ativo %}
+                                <img src="{% static 'admin/img/icon-yes.svg' %}" alt="Sim">
+                            {% else %}
+                                <img src="{% static 'admin/img/icon-no.svg' %}" alt="Não">
+                            {% endif %}
+                        </td>
+                    </tr>
+                {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+    {% endif %}
+
+<br><br>
+
+{% endblock content %}
+
+{% block javascript %}
+    <script src="{% static 'js/table_link.js' %}"></script>
+{% endblock javascript %}

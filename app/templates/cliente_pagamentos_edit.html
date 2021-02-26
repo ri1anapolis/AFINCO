@@ -1,0 +1,102 @@
+{% extends 'base.html' %}
+{% load permission_tags %}
+{% load crispy_forms_tags %}
+{% load static %}
+
+{% block title %}::: AFINCO ::: Pagamentos - Alterar{% endblock title %}
+
+{% block content %}
+
+    <h3>Pagamentos de Clientes</h3>
+    <span class="text-muted">Alterar a pagamento: {{ clientepagamentos }}</span>
+    <br><br>
+
+    <form method="post">
+        {% csrf_token %}
+
+        <div class="form-row">
+            <div class="col-sm-12 col-md-12 col-lg-9">
+                {{ form.cliente|as_crispy_field }}
+            </div>
+
+        </div>
+
+        <div class="form-row">
+            <div class="col-sm-5 col-md-4 col-lg-3">
+                {{ form.data_pagamento|as_crispy_field }}
+            </div>
+
+            <div class="col-sm-6 col-md-4 col-lg-3 money">
+                {{ form.valor|as_crispy_field }}
+            </div>
+
+        </div>
+
+        <div class="form-row">
+    
+            <div class="col-sm-5 col-md-4 col-lg-3">
+                {{ form.forma_pagamento|as_crispy_field }}
+            </div>
+
+            <div class="col-sm-6 col-md-4 col-lg-3" id="id_div_deposito" style="display: none;">
+                {{ form.deposito|as_crispy_field }}
+            </div>
+
+        </div>
+
+        <div class="form-row">
+            <div class="col-sm-12 col-md-12 col-lg-7 col-xl-6">
+                {{ form.notas_adicionais|as_crispy_field }}
+            </div>
+
+        </div>
+
+        <br>
+
+        <div class="form-row">
+            <div class="col-sm-12 col-md-12 col-lg-9">
+                <span class="text-muted float-right">
+                    <a href="{% url 'cliente_pagamentos_detail' clientepagamentos.pk %}" class="btn btn-outline-secondary" rule="button">Cancelar</a>
+                    {% if user|has_role:'oficial,contador' %}
+                    <input type="submit" class="btn btn-outline-success ml-2" id="salvar" value="Salvar">
+                    {% endif %}
+                </span>
+            </div>
+        </div>
+
+        <br>
+
+    </form>
+
+    <br>
+
+{% endblock content %}
+
+{% block javascript %}
+    <script type="text/javascript">
+        if($('#id_data_pagamento').length > 0){
+            $('#id_data_pagamento').get(0).type = 'date';
+            $('#id_data_pagamento').prop('value', "{{ clientepagamentos.data_pagamento|date:'Y-m-d' }}");
+        }
+
+        function hide_div() {
+            var fp = $('#id_forma_pagamento').val();
+            var dp = $('#id_deposito');
+            var div_dp = $('#id_div_deposito');
+
+            if ( fp != null && fp == 'DP' ) {
+                div_dp.show();
+            } else {
+                dp.prop('value', '');
+                div_dp.hide();
+            }
+        };
+
+        $(document).ready(function(){
+            hide_div();
+        });
+        $(document).on('change', '#id_forma_pagamento', function(event) {
+            hide_div();
+        });
+    </script>
+{% endblock javascript %}

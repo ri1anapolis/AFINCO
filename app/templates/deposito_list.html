@@ -1,0 +1,145 @@
+{% extends "base.html" %}
+{% load static %}
+{% load permission_tags %}
+{% load project_tags %}
+{% load mathfilters %}
+
+{% block title %}::: AFINCO ::: Depósitos - Lista{% endblock title %}
+
+{% block content %}
+    {% if user|has_role:'oficial,contador' %}
+    <a href="{% url 'deposito_new'%}" rule="button" class="btn proj-btn btn-outline-success float-right">+ Novo</a>
+    {% endif %}
+    <a href="#" data-toggle="collapse" rule="button" class="btn btn-sm btn-outline-info float-right mr-2" style="padding-bottom: .45rem;" data-target="#search">
+        <svg class="i-search" viewBox="0 0 32 32" width="24" height="24" fill="none" stroke="currentcolor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2">
+            <circle cx="14" cy="14" r="12"></circle>
+            <path d="M23 23 L30 30"></path>
+        </svg>
+    </a>
+    {% if filter.form.cleaned_data %}
+    <a class="mx-3 my-2 float-right small text-info" href="{% url 'deposito_list' %}">Limpar Filtros</a>
+    {% endif %}
+
+    <h3>Depósitos</h3>
+    <div id="search" class="collapse">
+        <!-- busca //-->
+        <div class="card">
+            <div class="card-header">
+                Filtrar Depósitos
+            </div>
+            <form action="" method="get">
+                <div class="card-body">
+
+                    <div class="row">
+
+                        <div class="form-group col-sm-12 col-md-7 col-lg-4 col-xl-3">
+                            {{ filter.form.identificacao.label_tag }}
+                            <div class="form-row">
+                                {{ filter.form.identificacao }}
+                            </div>
+                            <small class="form-text text-muted">{{ filter.form.identificacao.help_text }}</small>
+                        </div>
+
+                        <div class="form-group col-sm-6 col-md-5 col-lg-4 col-xl-3">
+                            {{ filter.form.data_deposito.label_tag }}
+                            <div class="form-row">
+                                {{ filter.form.data_deposito }}
+                            </div>
+                            <small class="form-text text-muted">{{ filter.form.data_deposito.help_text }}</small>
+                        </div>
+
+                        <div class="form-group col-sm-6 col-md-5 col-lg-4 col-xl-3">
+                            {{ filter.form.valor.label_tag }}
+                            <div class="form-row">
+                                {{ filter.form.valor }}
+                            </div>
+                            <small class="form-text text-muted">{{ filter.form.valor.help_text }}</small>
+                        </div>
+
+                        <div class="form-group col-sm-6 col-md-3 col-lg-2 col-xl-2">
+                            {{ filter.form.consolidado.label_tag }}
+                            <div class="form-row">
+                                {{ filter.form.consolidado }}
+                            </div>
+                            <small class="form-text text-muted">{{ filter.form.consolidado.help_text }}</small>
+                        </div>
+                        
+                        <div class="form-group col-sm-6 col-md-3 col-lg-2 col-xl-2">
+                            {{ filter.form.ordering.label_tag }}
+                            <div class="form-row">
+                                {{ filter.form.ordering }}
+                            </div>
+                            <small class="form-text text-muted">{{ filter.form.ordering.help_text }}</small>
+                        </div>
+
+                    </div>
+
+                </div>
+                <div class="card-footer">
+                    <button id="btn_busca" type="submit" class="btn btn-lg btn-primary btn-block">
+                        Filtrar Depósitos
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+    <br>
+
+    {% if object_list %}
+
+    <div class="table-responsive table-responsive-xl" id='table_list_content'>
+
+        <table class="table table-hover table_link">
+            <thead>
+                <tr>
+                    <th scope="col">Data</th>
+                    <th scope="col">Identificação</th>
+                    <th scope="col">Observações</th>
+                    <th scope="col">Valor</th>
+                    <th scope="col">Disponível</th>
+                    <th scope="col" class="text-center" style="width: 10%;">Consolidado</th>
+                </tr>
+            </thead>
+            <tbody>
+            {% for deposito in object_list %}
+                <tr data-href="{% url 'deposito_detail' deposito.pk %}" class="{% if deposito.consolidado %}text-muted{%endif%}">
+                    <td>{{ deposito.data_deposito|date:'d/m/Y' }}</td>
+                    <td >{{ deposito.identificacao|truncatewords:8 }}</td>
+                    <td >{% if deposito.observacoes %}{{ deposito.observacoes|truncatewords:8 }}{% else %}---{% endif %}</td>
+                    <td class="text-nowrap" >R$ {{ deposito.valor|floatformat:2|intseparator }}</td>
+                    <td class="small text-nowrap">R$ {{ deposito.valor|sub:deposito.valor_utilizado|floatformat:2|intseparator }}</td>
+                    <td class="text-center">
+                        {% if deposito.consolidado %}
+                            <img src="{% static 'admin/img/icon-yes.svg' %}" alt="Sim">
+                        {% else %}
+                            <img src="{% static 'admin/img/icon-no.svg' %}" alt="Não">
+                        {% endif %}
+                    </td>
+                </tr>
+
+            {% endfor %}
+            </tbody>
+        </table>
+
+    </div>
+    {% else %}
+        <p class="text-muted">Não há depósitos a serem exibidos.</p>
+    {% endif %}
+
+    <br><br>
+
+    {% if is_paginated %}
+        {% include "pagination.html" %}
+    {% endif %}
+
+{% endblock content %}
+
+{% block javascript %}
+<script src="{% static 'js/table_link.js' %}"></script>
+<script>
+    // this because it's soooo much easier than struggle with django-filter widgets
+    $(document).ready(function() {
+        $("#id_ordering").addClass("form-control").addClass("col-12")
+    })
+</script>
+{% endblock javascript %}

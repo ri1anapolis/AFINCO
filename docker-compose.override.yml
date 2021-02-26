@@ -1,0 +1,13 @@
+version: "3.1"
+
+services:
+  db:
+    env_file:
+      - ./env/development.env
+
+  django:
+    environment:
+      PYTHONUNBUFFERED: 0
+    env_file:
+      - ./env/development.env
+    command: ["python", "manage.py", "runserver", "0.0.0.0:8008"]

@@ -1,0 +1,33 @@
+{% extends 'base.html' %}
+{% load static %}
+{% load project_tags %}
+
+{% block title %}::: AFINCO ::: 500{% endblock title %}
+
+{% block content %}
+    <br><br>
+    <br><br>
+    <div class="proj-center-div text-light">
+        <div class="col-12 text-center">
+            <h1 class='display-1 font-weight-bold'>500</h1>
+            <h2 class='display-4'>Erro no servidor!</h2>
+            <br>
+            <p class='lead'>Houve um erro no processamento da sua requisição!</p>
+            <p class='lead'>Procure o suporte técnico para analisar essa situação!</p>
+        </div>
+    </div>
+
+    <div class="text-center text-muted fixed-bottom">
+        <small>{% project_version %}</small>
+    </div>
+{% endblock content %}
+
+{% block javascript %}
+    <script src="{% static 'js/particles.min.js' %}"></script>
+    <script src="{% static 'js/particles_init.js' %}"></script>
+    <script type="text/javascript">
+        $(function(){
+            $('.background').css('background-color', '#343a40');
+        });
+    </script>
+{% endblock javascript %}

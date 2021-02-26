@@ -1,0 +1,11 @@
+{
+  "editor.formatOnSave": true,
+  "python.formatting.provider": "black",
+  "prettier.disableLanguages": ["html"],
+  "python.linting.pylintArgs": ["--load-plugins=pylint_django"],
+  "python.pythonPath": "/home/suporte_local/.virtualenvs/contabil-2rKMIZVt/bin/python",
+  "[javascript]": {
+    "editor.defaultFormatter": "esbenp.prettier-vscode",
+    "editor.formatOnSave": true
+  }
+}

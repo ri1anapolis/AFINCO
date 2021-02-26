@@ -1,0 +1,54 @@
+{% extends "base.html" %}
+{% load crispy_forms_tags %}
+
+{% block title %}::: AFINCO ::: Depósitos - Editar{% endblock title %}
+
+{% block content %}
+    <h3>Depósitos</h3>
+    <span class="text-muted">Editar depósito bancário: <b>{{ depositos.identificacao }} ( R$ {{ depositos.valor }} )</b></span>
+    <br /><br />
+    <form method="post">{% csrf_token %}
+        <div class="row">
+            <div class="col-md-4 col-lg-3">
+                {{ form.data_deposito|as_crispy_field}}
+            </div>
+            <div class="col-md-5 col-lg-3">
+                {{ form.valor|as_crispy_field}}
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-md-9 col-lg-8">
+                {{ form.identificacao|as_crispy_field }}
+                {{ form.observacoes|as_crispy_field }}
+             </div>
+        </div>
+        <div class="row">
+            <div class="col-md-9 col-lg-8">
+                {{ form.consolidado|as_crispy_field }}
+            </div>
+        </div>
+
+        {% if fcaixa_list|length > 0 or clientes_pagamentos_list|length > 0 %}
+        <div class="row">
+            <div class="col-sm-12 col-md-10 col-lg-8">
+                <small class="text-danger text-justify">
+                    Devido ao depósito ter sido relacionado a um fechamento de caixa ou pagamento, sua edição está parcialmente bloqueada
+                    para garantir a integridade das informações. Ainda é possível alterar os campos "Observações" e "Consolidado"!
+                </small>
+            </div>
+        </div>
+        <br>
+        {% endif %}
+
+        <div class="row">
+            <div class="col-md-9 col-lg-8">
+                <span class="text-muted float-right">
+                    <a href="{% url 'deposito_detail' depositos.pk %}" class="btn btn-outline-secondary" rule="button">
+                        Cancelar
+                    </a>
+                    <input type="submit" class="btn btn-outline-success ml-2" value="Salvar">
+                </span>
+            </div>
+        </div>
+    </form>
+{% endblock content %}

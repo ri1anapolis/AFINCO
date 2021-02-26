@@ -1,0 +1,82 @@
+{% extends 'base.html' %}
+{% load static %}
+{% load project_tags %}
+{% load permission_tags %}
+
+{% block title %}::: AFINCO ::: Clientes - Lista{% endblock title %}
+
+{% block content %}
+
+    {% if user|has_role:'oficial,contador,supervisor_atendimento' %}
+    <a href="{% url 'cliente_new' %}" class="btn btn-outline-success float-right">+ Novo</a>
+    {% endif %}
+    <h3>Clientes</h3>
+
+    <br>
+    <div class="list-group">
+    {% if object_list %}
+
+    <div class="table-responsive table-responsive-xl" id='table_list_content'>
+
+        <table class="table table-hover table_link">
+            <thead>
+                <tr>
+                    <th scope="col">Nome</th>
+                    <th scope="col">Documento</th>
+                    <th scope="col">Telefone</th>
+                    <th scope="col">Saldo</th>
+                    <th scope="col" class="text-center">Ativo</th>
+                </tr>
+            </thead>
+            <tbody>
+            {% for cliente in object_list %}
+                <tr data-href="{% url 'cliente_detail' cliente.pk %}">
+                    <td>{{ cliente.nome }}</td>
+                    <td class="text-nowrap">
+                        {% if cliente.tipo_documento == 'PF' %}
+                            {{ cliente.get_tipo_documento_display }}: {{ cliente.cpf|cpf }}
+                        {% elif cliente.tipo_documento == 'PJ' %}
+                            {{ cliente.get_tipo_documento_display }}: {{ cliente.cnpj|cnpj }}
+                        {% elif cliente.tipo_documento == 'EX' %}
+                            {{ cliente.get_tipo_documento_display }}: {{ cliente.estrangeiro }}
+                        {% else %}
+                            ----
+                        {% endif %}
+                        </td>
+                    <td class="text-nowrap">
+                        {% if cliente.telefone %}
+                            {{ cliente.telefone|phone }}
+                        {% else %}
+                            ---
+                        {% endif %}</td>
+                    <td class="text-nowrap {% if cliente.saldo < 0 %}text-danger{% endif %}">R$ {{ cliente.saldo|floatformat:2|intseparator }}
+                        {% if cliente.verifica_saldo %}
+                            <img src="{% static 'svg/si-glyph-square-checked.svg' %}" height="16" width="16" alt="Saldo Verificado">
+                        {% endif %}
+                    </td>
+                    <td class="text-center">
+                        {% if cliente.ativo %}
+                            <img src="{% static 'admin/img/icon-yes.svg' %}" alt="Sim">
+                        {% else %}
+                            <img src="{% static 'admin/img/icon-no.svg' %}" alt="Não">
+                        {% endif %}
+                    </td>
+                </tr>
+
+            {% endfor %}
+            </tbody>
+        </table>
+
+    </div>
+
+    {% else %}
+        <p>Não há clientes cadastrados até o momento.</p>
+
+    {% endif %}
+
+    </div>
+{% endblock content %}
+
+{% block javascript %}
+    <script src="{% static 'js/table_link.js' %}"></script>
+{% endblock javascript %}
