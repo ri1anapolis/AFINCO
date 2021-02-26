@@ -142,7 +142,9 @@ class DepositoDeleteView(
                     + reverse("f_caixa")
                     + f'?fcaixa_id={lancamento.fechamento_caixa.id}"'
                 )
-                f_caixa_links += f' target="_blank">{lancamento.fechamento_caixa}</a>'
+                f_caixa_links += (
+                    f' target="_blank" rel="noopener">{lancamento.fechamento_caixa}</a>'
+                )
 
             # passing the object is a shortcut to get_absolute_url from model
             messages.error(

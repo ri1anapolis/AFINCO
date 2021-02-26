@@ -151,7 +151,7 @@
                         $('#card_body').empty().append('<h4 class="card-title">Seu relatório está pronto!</h4><p class="card-text">Foram encontrados ' + data.registros + ' registros no período de ' + data.periodo + '.</p>')
                         $('#card_header').empty().html(data.relatorio);
                         $('#card_download').show()
-                        $('#card_download').empty().append('<a target="_blank" id="download_link" href="' + data.file + '" class="btn btn-primary btn-block">Baixar o relatório em formato excel</a>')
+                        $('#card_download').empty().append('<a target="_blank" rel="noopener" id="download_link" href="' + data.file + '" class="btn btn-primary btn-block">Baixar o relatório em formato excel</a>')
                     } else {
                         $('#card_body').empty().append('<h4 class="card-title">Não há informações para o período!</h4><p class="card-text">Não foram encontrados registros no período de ' + data.periodo + '.</p>')
                         $('#card_download').empty().hide();

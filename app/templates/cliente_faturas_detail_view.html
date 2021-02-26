@@ -105,7 +105,7 @@
     <div class="form-row">
         <div class="col-sm-12 col-md-12 col-lg-9">
 
-            <a href="?print" target="_blank" rule="button" 
+            <a href="?print" target="_blank" rel="noopener" rule="button" 
             {% if clientefaturas.liquidado %}
                 class="btn btn-light"
             {% else %}
@@ -161,7 +161,7 @@
                 </thead>
                 <tbody>
                 {% for servico in servicos_relacionados %}
-                    <tr data-href="{% url 'cliente_servicos_detail' servico.pk %}" data-target="_blank">
+                    <tr data-href="{% url 'cliente_servicos_detail' servico.pk %}" data-target="_blank" rel="noopener">
                         <td>{{ servico.data|date:'d/m/Y' }}</td>
                         <td>
                             {% if servico.protocolo %}

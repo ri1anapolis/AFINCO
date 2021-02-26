@@ -142,9 +142,10 @@ We think the most secure way to upgrade AFINCO is running a new instance! We thi
 
 4. Run the new AFINCO version:
 
-   If everything is fine, the new AFINCO version should go up and run with no problems.
+   Rebuild the AFINCO image to avoid any problem, then, if everything is fine, the new AFINCO version should go up and run with no problems.
 
    ```bash
+   docker-compose -f docker-compose.yml build
    docker-compose -f docker-compose.yml up
    ```
 

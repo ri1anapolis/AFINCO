@@ -257,7 +257,7 @@ class ClienteDeleteView(
                 servicos += '<a href="' + reverse(
                     "cliente_servicos_detail", args=[str(servico.id)]
                 )
-                servicos += f'" target="_blank">{servico.tipo_protocolo}.{servico.protocolo}</a>'
+                servicos += f'" target="_blank" rel="noopener">{servico.tipo_protocolo}.{servico.protocolo}</a>'
 
             # passing the object is a shortcut to get_absolute_url from model
             messages.error(
@@ -413,9 +413,7 @@ class ClienteServicosDeleteView(
             servico_link = '<a href="' + reverse(
                 "cliente_servicos_detail", args=[str(self.object.id)]
             )
-            servico_link += (
-                f'" target="_blank">ID{self.object.id}V{self.object.valor}</a>'
-            )
+            servico_link += f'" target="_blank" rel="noopener">ID{self.object.id}V{self.object.valor}</a>'
 
             if error.args[1].caixa:
                 f_caixa_link = (
@@ -423,7 +421,9 @@ class ClienteServicosDeleteView(
                     + reverse("f_caixa")
                     + f"?fcaixa_id={error.args[1].caixa.id}"
                 )
-                f_caixa_link += f'" target="_blank">{error.args[1].caixa}</a>'
+                f_caixa_link += (
+                    f'" target="_blank" rel="noopener">{error.args[1].caixa}</a>'
+                )
 
                 # passing the object is a shortcut to get_absolute_url from model
                 messages.error(
@@ -435,7 +435,9 @@ class ClienteServicosDeleteView(
                 fatura_link = '<a href="' + reverse(
                     "cliente_faturas_detail", args=[str(error.args[1].fatura.id)]
                 )
-                fatura_link += f'" target="_blank">{error.args[1].fatura}</a>'
+                fatura_link += (
+                    f'" target="_blank" rel="noopener">{error.args[1].fatura}</a>'
+                )
 
                 messages.error(
                     request,
@@ -533,7 +535,7 @@ class ClienteFaturasDeleteView(
             fatura_link = '<a href="' + reverse(
                 "cliente_faturas_detail", args=[str(self.object.id)]
             )
-            fatura_link += f'" target="_blank">{self.object}</a>'
+            fatura_link += f'" target="_blank" rel="noopener">{self.object}</a>'
 
             _servicos_links = []
             _outros_objs = []
@@ -544,7 +546,7 @@ class ClienteFaturasDeleteView(
                     _servicos_links.append(
                         '<a href="'
                         + reverse("cliente_servicos_detail", args=[str(obj.id)])
-                        + f'" target="_blank">{obj}</a>'
+                        + f'" target="_blank" rel="noopener">{obj}</a>'
                     )
 
                 else:
@@ -676,13 +678,15 @@ class ClientePagamentosDeleteView(
             pagamento_link = '<a href="' + reverse(
                 "cliente_pagamentos_detail", args=[str(self.object.id)]
             )
-            pagamento_link += f'" target="_blank">{self.object}</a>'
+            pagamento_link += f'" target="_blank" rel="noopener">{self.object}</a>'
 
             if getattr(error.args[1], "deposito", False):
                 deposito_link = '<a href="' + reverse(
                     "deposito_detail", args=[str(error.args[1].deposito.id)]
                 )
-                deposito_link += f'" target="_blank">{error.args[1].deposito}</a>'
+                deposito_link += (
+                    f'" target="_blank" rel="noopener">{error.args[1].deposito}</a>'
+                )
 
                 # passing the object is a shortcut to get_absolute_url from model
                 messages.error(

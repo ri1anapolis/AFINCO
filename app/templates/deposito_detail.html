@@ -104,7 +104,7 @@
 
                 {% for fcaixa in fcaixa_list %}
                     {% if user|has_role:'oficial,contador,supervisor_atendimento' %}
-                    <a href="{% url 'f_caixa' %}?fcaixa_id={{ fcaixa.fechamento_caixa.id }}" target="_blank" class="list-group-item list-group-item-action">
+                    <a href="{% url 'f_caixa' %}?fcaixa_id={{ fcaixa.fechamento_caixa.id }}" target="_blank" rel="noopener" class="list-group-item list-group-item-action">
                     {% else %}
                     <a href="#" class="list-group-item list-group-item-action" disabled="true" onclick="return false;">
                     {% endif %}
