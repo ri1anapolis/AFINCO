@@ -8,7 +8,7 @@ This app intends to solve some specific needs from the [Property Registry Office
 
 We intend - maybe - to make this a lot more generic to be useful to more people, but we haven't a roadmap to achieve that.
 
-Note: Initially AFINCO was named as `contabil` and because of that there are several references to this name in the code.
+Note: Initially AFINCO was named as `afinco` and because of that there are several references to this name in the code.
 
 ## NEW INSTALLS
 
@@ -109,7 +109,7 @@ We think the most secure way to upgrade AFINCO is running a new instance! We thi
    Check the docker volume name in the docker-compose file and choose or create a new folder to save the resulting backup.
 
    ```bash
-   docker run --rm -v contabil_db_storage:/from -v ./backups:/to ubuntu bash -c "cd /from && tar -cvf /to/backup.tar ."
+   docker run --rm -v afinco_db_storage:/from -v ./backups:/to ubuntu bash -c "cd /from && tar -cvf /to/backup.tar ."
    ```
 
    Check if tar file exists in the target folder and if it has valid data.
@@ -125,13 +125,13 @@ We think the most secure way to upgrade AFINCO is running a new instance! We thi
 
 3. Create a new docker volume and restore the backup:
 
-   Please note that the docker-compose command will auto generate a new volume if the given volume name couldn't be found. Also note tha it'll look for a volume prefixed with the folder name, so, if the folder name is `contabil` and the given volume name in the `docker-compose.yml` file is `db_storage`, the name of the resulting docker volume should be `contabil_db_storage`!
+   Please note that the docker-compose command will auto generate a new volume if the given volume name couldn't be found. Also note tha it'll look for a volume prefixed with the folder name, so, if the folder name is `afinco` and the given volume name in the `docker-compose.yml` file is `db_storage`, the name of the resulting docker volume should be `afinco_db_storage`!
 
    Also make sure the backup is accessible to the new location.
 
    ```bash
-   docker volume create contabil_db_storage_new
-   docker run --rm -v /path/to/backup/folder:/from -v contabil_db_storage_new:/to ubuntu -c "cd /to && tar -xvf /from/backup.tar --strip 1"
+   docker volume create afinco_db_storage_new
+   docker run --rm -v /path/to/backup/folder:/from -v afinco_db_storage_new:/to ubuntu -c "cd /to && tar -xvf /from/backup.tar --strip 1"
    ```
 
    Remember to modify the `docker-compose.yml` file to set the new volume name.
@@ -142,9 +142,10 @@ We think the most secure way to upgrade AFINCO is running a new instance! We thi
 
 4. Run the new AFINCO version:
 
-   If everything is fine, the new AFINCO version should go up and run with no problems.
+   Rebuild the AFINCO image to avoid any problem, then, if everything is fine, the new AFINCO version should go up and run with no problems.
 
    ```bash
+   docker-compose -f docker-compose.yml build
    docker-compose -f docker-compose.yml up
    ```
 
