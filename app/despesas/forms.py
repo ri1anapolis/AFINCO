@@ -12,6 +12,9 @@ class CategoriaDespesaForm(forms.ModelForm):
 
 
 class DespesaForm(forms.ModelForm):
+    class Media:
+        js = ["js/despesas.js"]
+
     class Meta:
         model = models.Despesa
         fields = "__all__"
