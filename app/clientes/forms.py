@@ -342,6 +342,7 @@ class ClientePagamentosForm(forms.ModelForm):
     def __init__(self, *args, **kwargs):
         self.request = kwargs.pop("request")
         self.liquidar_faturas = []
+        self.data_pagamento = timezone.now()
 
         super(ClientePagamentosForm, self).__init__(*args, **kwargs)
 
@@ -412,7 +413,7 @@ class ClientePagamentosForm(forms.ModelForm):
 
     def clean(self):
         cleaned_data = super().clean()
-        data_pagamento = cleaned_data.get("data_pagamento")
+        data_pagamento = self.data_pagamento = cleaned_data.get("data_pagamento")
         forma_pagamento = cleaned_data.get("forma_pagamento")
         deposito = cleaned_data.get("deposito")
         valor = cleaned_data.get("valor", 0) or 0
@@ -561,7 +562,7 @@ class ClientePagamentosForm(forms.ModelForm):
                                 )
 
                             fatura.liquidado = True
-                            fatura.data_pagamento = timezone.now()
+                            fatura.data_pagamento = self.data_pagamento
                             fatura.save()
 
                     except Exception as error:
