@@ -1,8 +1,8 @@
 {
-  "name": "contabil",
+  "name": "AFINCO",
   "version": "1.0.0",
   "main": "index.js",
-  "repository": "https://undr3ad@bitbucket.org/undr3ad/contabil.git",
+  "repository": "https://github.com/ri1anapolis/AFINCO",
   "author": "André Martins <fmartins.andre@gmail.com>",
   "license": "MIT",
   "scripts": {
