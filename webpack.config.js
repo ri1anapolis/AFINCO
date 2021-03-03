@@ -7,6 +7,7 @@ module.exports = [
         __dirname,
         'js-src/cliente_pagamentos_new/index.js'
       ),
+      despesas: path.resolve(__dirname, 'js-src/despesas/index.js'),
     },
     output: {
       path: path.resolve(__dirname, 'app/assets/js'),
