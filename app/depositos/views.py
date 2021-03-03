@@ -27,7 +27,7 @@ class DepositoListView(LoginRequiredMixin, FilterView):
     template_name = "deposito_list.html"
     login_url = "login"
     filterset_class = filters.DepositosFilter
-    paginate_by = 25
+    paginate_by = 50
 
 
 class DepositoDetailView(LoginRequiredMixin, DetailView):
