@@ -153,8 +153,11 @@ class SaveRelatedDataFcaixa:
         return (comprovantes_ids_client, erro)
 
     @transaction.atomic
-    def save_clientes_servicos(self, servicos, f_caixa_id, data=date.today()):
-        """Salva os novos serviços recebidos do cliente."""
+    def save_clientes_servicos(self, servicos, f_caixa_id, data=None):
+        """ Salva os serviço realizados no caixa."""
+        data = data or date.today()
+
+        """Salva os novos serviços recebidos do cliente."""  # pylint: disable=pointless-string-statement
         clientes_servicos_ids, erro = [], ""
 
         for servico in servicos:
