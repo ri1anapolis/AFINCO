@@ -10,7 +10,7 @@ from sentry_sdk.integrations.django import DjangoIntegration
 
 
 # Current project version
-PROJECT_VERSION = "v1.0"
+PROJECT_VERSION = "v1.1"
 PROJECT_ENV = os.environ["DJANGO_ENVIRONMENT"]
 
 sentry_sdk.init(

@@ -40,14 +40,14 @@ def get_cartoes(request):
             if _bandeira.usar_debito:
                 _bandeira_dict["taxa_debito"] = float(
                     getattr(_bandeira, "taxa_debito", None)
-                    if _bandeira.taxa_debito
+                    if _bandeira.taxa_debito is not None
                     else _taxa_debito
                 )
 
             if _bandeira.usar_credito:
                 _bandeira_dict["taxa_credito_avista"] = float(
                     getattr(_bandeira, "taxa_credito_avista")
-                    if _bandeira.taxa_credito_avista
+                    if _bandeira.taxa_credito_avista is not None
                     else _taxa_credito
                 )
                 _bandeira_dict["parcelar"] = _bandeira.parcelar
@@ -57,12 +57,12 @@ def get_cartoes(request):
                     _bandeira_dict["parcelamento"] = _bandeira.parcelamento
                     _bandeira_dict["taxa_credito_parcelado"] = (
                         float(_bandeira.taxa_credito_parcelado)
-                        if _bandeira.taxa_credito_parcelado
+                        if _bandeira.taxa_credito_parcelado is not None
                         else None
                     )
                     _bandeira_dict["taxa_credito_parcelado_porparcela"] = (
                         float(_bandeira.taxa_credito_parcelado_porparcela)
-                        if _bandeira.taxa_credito_parcelado_porparcela
+                        if _bandeira.taxa_credito_parcelado_porparcela is not None
                         else None
                     )
 
@@ -196,6 +196,9 @@ class RegistrosCartoesCreate(LoginRequiredMixin, BaseCreateView):
     form_class = RegistrosCartoesForm
     model = RegistrosCartoes
     login_url = "login"
+
+    def get(self, request):
+        return redirect("cartoes")
 
     def post(self, request, *args, **kwargs):
         fcaixa_status = fcaixa_block(request)
