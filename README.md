@@ -8,7 +8,7 @@ This app intends to solve some specific needs from the [Property Registry Office
 
 We intend - maybe - to make this a lot more generic to be useful to more people, but we haven't a roadmap to achieve that.
 
-Note: Initially AFINCO was named as `afinco` and because of that there are several references to this name in the code.
+Note: Initially AFINCO was named as `contabil` and because of that, there are several references to this name in the code.
 
 ## NEW INSTALLS
 
