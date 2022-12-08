@@ -16,7 +16,7 @@ pylint-django = "*"
 rope = "*"
 
 [packages]
-certifi = "~=2019.3"
+certifi = "~=2022.12"
 Django = "~=2.2"
 django-appconf = "~=1.0"
 django-auth-ldap = "~=2.0"
